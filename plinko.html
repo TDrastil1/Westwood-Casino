@@ -6,7 +6,7 @@
   <title>Plinko - Westwood Casino</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
       background-color: #1e1e2f;
       color: #fff;
       text-align: center;
@@ -15,6 +15,7 @@
     }
 
     h1 {
+      font-size: 3rem;
       color: #ffcc00;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
     }
@@ -24,187 +25,141 @@
       font-size: 1rem;
     }
 
-    div.chip {
+    .plinko-board {
+      position: relative;
+      margin: 20px auto;
+      width: 400px;
+      height: 600px;
+      background-color: #2a2a40;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .pin {
       position: absolute;
       width: 10px;
       height: 10px;
+      background-color: white;
       border-radius: 50%;
-      background-color: blue;
     }
 
-    #plinko-board {
-      position: relative;
-      margin: 2em auto;
-      width: 400px;
-      height: 200px;
-      background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/25877/board.png');
-      background-size: cover;
-    }
-
-    ul.buckets,
-    ul.percents {
+    .bucket {
       position: absolute;
-      left: 0;
-      width: 100%;
-      padding: 0;
-      margin: 5px 0;
-    }
-
-    ul.buckets {
-      bottom: -2em;
-      border-bottom: 1px solid black;
-    }
-
-    ul.percents {
-      bottom: -3.5em;
-    }
-
-    ul.buckets li,
-    ul.percents li {
-      list-style: none;
-      float: left;
-      width: 31px;
-      text-align: center;
+      bottom: 0;
+      width: 60px;
+      height: 50px;
+      background-color: #444;
+      border: 1px solid #555;
       color: #fff;
+      text-align: center;
+      line-height: 50px;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+
+    .chip {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background-color: red;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+    }
+
+    .start-button {
+      background-color: #28a745;
+      color: #fff;
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 20px;
+    }
+
+    .start-button:hover {
+      background-color: #218838;
     }
   </style>
 </head>
 <body>
   <h1>Plinko</h1>
-  <p>
-    Press <strong>[Space]</strong> to drop a single puck, or hold it down to release multiple pucks. Each puck follows a 50% chance of going left or right at each peg.
-  </p>
-  <div id="plinko-board">
-    <ul class="buckets">
-      <li id="one">0 ς</li>
-      <li id="two">0 ς</li>
-      <li id="three">0 ς</li>
-      <li id="four">0 ς</li>
-      <li id="five">0 ς</li>
-    </ul>
-    <ul class="percents">
-      <li id="one_percent">0.00%</li>
-      <li id="two_percent">0.00%</li>
-      <li id="three_percent">0.00%</li>
-      <li id="four_percent">0.00%</li>
-      <li id="five_percent">0.00%</li>
-    </ul>
-  </div>
+  <p>Press the "Drop Chip" button to start the game!</p>
+  <div class="plinko-board" id="plinkoBoard"></div>
+  <button class="start-button" id="startButton">Drop Chip</button>
 
   <script>
-    const buckets = {
-      drops: 0,
-      1: 0,
-      2: 0,
-      3: 0,
-      4: 0,
-      5: 0,
-    };
+    const plinkoBoard = document.getElementById('plinkoBoard');
 
-    function updateStat(selector, count, percent) {
-      document.querySelector(selector).textContent = `${count} ς`;
-      document.querySelector(`${selector}_percent`).textContent = percent;
-    }
-
-    function updateBuckets() {
-      const selectors = ['#one', '#two', '#three', '#four', '#five'];
-      selectors.forEach((selector, i) => {
-        const count = buckets[i + 1];
-        const percent = buckets.drops > 0
-          ? ((buckets[i + 1] / buckets.drops) * 100).toFixed(2) + '%'
-          : '0.00%';
-        updateStat(selector, count, percent);
-      });
-    }
-
-    function getRandom() {
-      return Math.random() < 0.5 ? -1 : 1;
-    }
-
-    function getBucket(chip) {
-      const total = chip.path.reduce((sum, step) => sum + step, 0);
-      const bucketMap = { '-4': 1, '-2': 2, '0': 3, '2': 4, '4': 5 };
-      const bucket = bucketMap[total] || 3;
-      buckets[bucket]++;
-      buckets.drops++;
-      updateBuckets();
-      chip.el.remove();
-    }
-
-    class Chip {
-      constructor(boardId, speed) {
-        this.board = document.getElementById(boardId);
-        this.speed = speed;
-        this.location = {
-          x: this.board.offsetWidth / 2,
-          y: 0,
-        };
-        this.lastStep = 0;
-
-        const chip = document.createElement('div');
-        chip.className = 'chip';
-        this.board.appendChild(chip);
-        this.el = chip;
-
-        this.el.style.left = `${this.location.x}px`;
-        this.el.style.top = `${this.location.y}px`;
-      }
-
-      start() {
-        this.path = Array.from({ length: 4 }, () => getRandom());
-        this.nextStep();
-      }
-
-      nextStep() {
-        if (this.lastStep < 4) {
-          const offset = this.path[this.lastStep] < 0 ? -2 : 2;
-          this.animateTo({
-            x: offset,
-            y: 2,
-          });
-        } else {
-          getBucket(this);
+    // Generate pins in a triangle structure
+    function createPins() {
+      const rows = 10;
+      const pinSpacing = 40;
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col <= row; col++) {
+          const pin = document.createElement('div');
+          pin.classList.add('pin');
+          pin.style.left = `${(plinkoBoard.offsetWidth / 2) - (row * pinSpacing / 2) + (col * pinSpacing)}px`;
+          pin.style.top = `${row * pinSpacing}px`;
+          plinkoBoard.appendChild(pin);
         }
       }
+    }
 
-      animateTo(offset) {
-        const step = {
-          x: this.board.offsetWidth / 17,
-          y: this.board.offsetHeight / 11,
-        };
-
-        this.el.style.transition = `all ${this.speed}ms linear`;
-        this.el.style.left = `${parseFloat(this.el.style.left) + step.x * offset.x}px`;
-        this.el.style.top = `${parseFloat(this.el.style.top) + step.y * offset.y}px`;
-
-        setTimeout(() => {
-          this.lastStep++;
-          this.nextStep();
-        }, this.speed);
+    // Generate buckets at the bottom
+    function createBuckets() {
+      const bucketCount = 8;
+      const bucketWidth = 60;
+      for (let i = 0; i < bucketCount; i++) {
+        const bucket = document.createElement('div');
+        bucket.classList.add('bucket');
+        bucket.style.left = `${i * bucketWidth}px`;
+        bucket.innerText = `${(i + 1) * 2} ς`;
+        plinkoBoard.appendChild(bucket);
       }
     }
 
-    let faucetId;
+    // Drop a chip
+    function dropChip() {
+      const chip = document.createElement('div');
+      chip.classList.add('chip');
+      chip.style.left = `${plinkoBoard.offsetWidth / 2}px`;
+      chip.style.top = `0px`;
+      plinkoBoard.appendChild(chip);
 
-    document.addEventListener('DOMContentLoaded', () => {
-      document.addEventListener('keydown', (e) => {
-        e.preventDefault();
-        if (e.code === 'Space') {
-          const chip = new Chip('plinko-board', 500);
-          chip.start();
-        } else if (e.code === 'KeyO') {
-          if (!faucetId) {
-            faucetId = setInterval(() => {
-              const chip = new Chip('plinko-board', 500);
-              chip.start();
-            }, 200);
-          } else {
-            clearInterval(faucetId);
-            faucetId = null;
-          }
+      let x = plinkoBoard.offsetWidth / 2;
+      let y = 0;
+      const chipInterval = setInterval(() => {
+        // Randomly move left or right
+        x += Math.random() < 0.5 ? -10 : 10;
+        y += 10;
+
+        // Prevent chip from going out of bounds
+        if (x < 0) x = 0;
+        if (x > plinkoBoard.offsetWidth - 15) x = plinkoBoard.offsetWidth - 15;
+
+        chip.style.left = `${x}px`;
+        chip.style.top = `${y}px`;
+
+        // Stop when chip reaches the bottom
+        if (y >= plinkoBoard.offsetHeight - 50) {
+          clearInterval(chipInterval);
         }
-      });
-    });
+      }, 50);
+    }
+
+    // Initialize the board
+    function initializePlinko() {
+      createPins();
+      createBuckets();
+    }
+
+    // Event listener for the start button
+    document.getElementById('startButton').addEventListener('click', dropChip);
+
+    // Set up the game on page load
+    initializePlinko();
   </script>
 </body>
 </html>
