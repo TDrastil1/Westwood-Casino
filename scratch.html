@@ -138,45 +138,50 @@
     ctx.fillStyle = '#a9a9a9';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Scratch animation
+    // Scratch animation variables
+    const totalArea = canvas.width * canvas.height;
+    let scratchedArea = 0;
+
     const animateCoin = () => {
-      const cardRect = canvas.getBoundingClientRect();
-      const startX = cardRect.left;
-      const startY = cardRect.top;
-      const width = cardRect.width;
-      const height = cardRect.height;
+      const coinRadius = 20;
+      let x = 10; // Start position of the coin
+      let y = 10;
+      const stepX = 30; // Horizontal movement per step
+      const stepY = 30; // Vertical movement per row
 
-      const coinRect = coin.getBoundingClientRect();
-      let x = coinRect.left - startX;
-      let y = coinRect.top - startY;
-
-      let direction = 1; // 1 for right, -1 for left
-      const speed = 10;
-      const scratchInterval = setInterval(() => {
+      const scratch = () => {
         // Scratch effect
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
-        ctx.arc(x, y, 20, 0, Math.PI * 2, false);
+        ctx.arc(x, y, coinRadius, 0, Math.PI * 2, false);
         ctx.fill();
 
-        // Move coin
-        if (direction === 1) x += speed;
-        else x -= speed;
+        // Calculate scratched area
+        scratchedArea += Math.PI * coinRadius * coinRadius;
 
-        if (x > width - 20 || x < 20) {
-          // Change direction when hitting edge
-          direction *= -1;
-          y += 30; // Move down to simulate a new scratch row
+        // Move the coin to the next position
+        x += stepX;
+        if (x > canvas.width - coinRadius) {
+          x = 10; // Reset to the start of the row
+          y += stepY; // Move down one row
         }
 
-        // Stop animation when most of the layer is scratched
-        if (y > height) {
-          clearInterval(scratchInterval);
-          setTimeout(() => {
-            alert('🎉 Congratulations! You won a prize!');
-          }, 500);
+        // Stop animation if the coin goes out of bounds
+        if (y > canvas.height) {
+          if (scratchedArea / totalArea > 0.7) {
+            setTimeout(() => {
+              alert('🎉 Congratulations! You won a prize!');
+            }, 500);
+          }
+          return;
         }
-      }, 50);
+
+        // Continue the animation
+        requestAnimationFrame(scratch);
+      };
+
+      // Start the animation
+      scratch();
     };
 
     // Add event listener to the coin
