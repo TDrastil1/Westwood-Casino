@@ -13,6 +13,7 @@
       margin: 0;
       padding: 0;
     }
+
     .container {
       display: flex;
       flex-direction: column;
@@ -21,27 +22,34 @@
       height: 100vh;
       padding: 20px;
     }
+
     h1 {
       font-size: 3rem;
       margin-bottom: 10px;
       color: #ffcc00;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
     }
-    p {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-      color: #ccc;
-    }
-    .game-area {
+
+    .plinko-board {
       margin-top: 30px;
+      display: grid;
+      grid-template-columns: repeat(5, 50px);
+      gap: 10px;
     }
-    .game-image {
-      width: 300px;
-      height: auto;
-      border-radius: 10px;
+
+    .plinko-slot {
+      width: 50px;
+      height: 50px;
+      background-color: #333;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffcc00;
+      font-size: 1.2rem;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      margin-bottom: 20px;
     }
+
     .play-button {
       background-color: #007bff;
       color: #fff;
@@ -51,11 +59,14 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.3s, transform 0.3s;
+      margin-top: 20px;
     }
+
     .play-button:hover {
       background-color: #0056b3;
       transform: scale(1.05);
     }
+
     .back-link {
       display: inline-block;
       margin-top: 20px;
@@ -64,8 +75,14 @@
       text-decoration: none;
       transition: color 0.3s;
     }
+
     .back-link:hover {
       color: #fff;
+    }
+
+    .result-message {
+      margin-top: 20px;
+      font-size: 1.5rem;
     }
   </style>
 </head>
@@ -73,11 +90,35 @@
   <div class="container">
     <h1>Plinko</h1>
     <p>Drop the ball and see where it lands!</p>
-    <div class="game-area">
-      <img src="plinko.png" alt="Plinko Board" class="game-image">
-      <button class="play-button">Play Now</button>
+    <div class="plinko-board">
+      <div class="plinko-slot">1</div>
+      <div class="plinko-slot">2</div>
+      <div class="plinko-slot">3</div>
+      <div class="plinko-slot">4</div>
+      <div class="plinko-slot">5</div>
     </div>
+    <button class="play-button" onclick="dropBall()">Drop Ball</button>
+    <p id="result" class="result-message"></p>
     <a href="index.html" class="back-link">← Back to Home</a>
   </div>
+
+  <script>
+    function dropBall() {
+      // Simulate dropping a ball randomly into one of the Plinko slots
+      const randomSlot = Math.floor(Math.random() * 5) + 1;
+      const result = document.getElementById('result');
+
+      // Update result message based on the slot
+      result.innerText = `🎯 The ball landed in slot ${randomSlot}!`;
+
+      // Style the result message to make it exciting
+      if (randomSlot === 3) {
+        result.style.color = '#28a745'; // Green for a special win
+        result.innerText += " 🎉 You hit the jackpot!";
+      } else {
+        result.style.color = '#ffc107'; // Yellow for a normal win
+      }
+    }
+  </script>
 </body>
 </html>
