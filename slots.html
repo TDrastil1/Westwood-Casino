@@ -25,7 +25,6 @@
 
     h1 {
       font-size: 3rem;
-      margin-bottom: 10px;
       color: #ffcc00;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
     }
@@ -34,32 +33,32 @@
       display: flex;
       justify-content: center;
       gap: 15px;
-      padding: 10px 20px;
-      border-radius: 10px;
+      padding: 20px;
+      background: #333;
+      border-radius: 15px;
       margin-bottom: 20px;
     }
 
     .slot {
       width: 80px;
       height: 80px;
-      background-color: #333;
+      background: #444;
       color: #ffcc00;
       font-size: 2rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 8px;
-      border: 3px solid #444;
+      border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
     .play-button {
       background-color: #28a745;
       color: #fff;
-      font-size: 1.2rem;
+      font-size: 1.5rem;
       padding: 15px 30px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       transition: background-color 0.3s, transform 0.3s;
     }
@@ -70,10 +69,9 @@
     }
 
     .back-link {
-      display: inline-block;
       margin-top: 20px;
       color: #ccc;
-      font-size: 1rem;
+      font-size: 1.2rem;
       text-decoration: none;
       transition: color 0.3s;
     }
@@ -94,8 +92,8 @@
     <p>Spin the reels and test your luck!</p>
     <div class="slots-machine">
       <div class="slot" id="slot1">🍒</div>
-      <div class="slot" id="slot2">7</div>
-      <div class="slot" id="slot3">⭐</div>
+      <div class="slot" id="slot2">⭐</div>
+      <div class="slot" id="slot3">🍋</div>
     </div>
     <button class="play-button" onclick="spinSlots()">Play Now</button>
     <p id="result" class="result-message"></p>
@@ -104,22 +102,30 @@
 
   <script>
     function spinSlots() {
-      const symbols = ['🍒', '7', '🍋', '⭐', '🍇'];
+      // Symbols available for slots
+      const symbols = ['🍒', '⭐', '🍋', '🍇', '7'];
+
+      // Randomize each slot
       const slot1 = symbols[Math.floor(Math.random() * symbols.length)];
       const slot2 = symbols[Math.floor(Math.random() * symbols.length)];
       const slot3 = symbols[Math.floor(Math.random() * symbols.length)];
 
+      // Update slot visuals
       document.getElementById('slot1').innerText = slot1;
       document.getElementById('slot2').innerText = slot2;
       document.getElementById('slot3').innerText = slot3;
 
+      // Check for results
       const result = document.getElementById('result');
       if (slot1 === slot2 && slot2 === slot3) {
-        result.innerText = "🎉 JACKPOT! You win!";
-        result.style.color = "#28a745";
+        result.innerText = `🎉 JACKPOT! You win 100 ς!`;
+        result.style.color = '#28a745';
+      } else if (slot1 === slot2 || slot2 === slot3 || slot1 === slot3) {
+        result.innerText = `✨ You win 10 ς!`;
+        result.style.color = '#ffc107';
       } else {
-        result.innerText = "😞 Try Again!";
-        result.style.color = "#ff4444";
+        result.innerText = `😞 Try Again!`;
+        result.style.color = '#ff4444';
       }
     }
   </script>
