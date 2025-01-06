@@ -13,6 +13,7 @@
       margin: 0;
       padding: 0;
     }
+
     .container {
       display: flex;
       flex-direction: column;
@@ -21,27 +22,46 @@
       height: 100vh;
       padding: 20px;
     }
+
     h1 {
       font-size: 3rem;
       margin-bottom: 10px;
       color: #ffcc00;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
     }
-    p {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-      color: #ccc;
-    }
-    .game-area {
-      margin-top: 30px;
-    }
-    .game-image {
+
+    .scratch-card {
       width: 300px;
-      height: auto;
+      height: 200px;
+      background-color: #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       border-radius: 10px;
+      position: relative;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
       margin-bottom: 20px;
     }
+
+    .hidden-message {
+      font-size: 1.5rem;
+      color: #28a745;
+      z-index: 2;
+      visibility: hidden;
+    }
+
+    .scratch-overlay {
+      width: 100%;
+      height: 100%;
+      background-color: #999;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
     .play-button {
       background-color: #ffc107;
       color: #000;
@@ -52,10 +72,12 @@
       cursor: pointer;
       transition: background-color 0.3s, transform 0.3s;
     }
+
     .play-button:hover {
       background-color: #e0a800;
       transform: scale(1.05);
     }
+
     .back-link {
       display: inline-block;
       margin-top: 20px;
@@ -64,6 +86,7 @@
       text-decoration: none;
       transition: color 0.3s;
     }
+
     .back-link:hover {
       color: #fff;
     }
@@ -73,11 +96,25 @@
   <div class="container">
     <h1>Scratch-Offs</h1>
     <p>Scratch the ticket and reveal your prize!</p>
-    <div class="game-area">
-      <img src="scratch.png" alt="Scratch-Off Ticket" class="game-image">
-      <button class="play-button">Scratch Now</button>
+    <div class="scratch-card">
+      <div class="hidden-message" id="hiddenMessage">🎉 You Win 100 ς!</div>
+      <div class="scratch-overlay" id="scratchOverlay"></div>
     </div>
     <a href="index.html" class="back-link">← Back to Home</a>
   </div>
+
+  <script>
+    const scratchOverlay = document.getElementById('scratchOverlay');
+    const hiddenMessage = document.getElementById('hiddenMessage');
+
+    // Reveal the hidden message when the overlay is clicked
+    scratchOverlay.addEventListener('click', () => {
+      scratchOverlay.style.opacity = '0';
+      setTimeout(() => {
+        scratchOverlay.style.display = 'none';
+        hiddenMessage.style.visibility = 'visible';
+      }, 300); // Wait for transition
+    });
+  </script>
 </body>
 </html>
