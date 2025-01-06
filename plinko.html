@@ -30,8 +30,8 @@
 
     .plinko-board {
       position: relative;
-      width: 500px;
-      height: 700px;
+      width: 600px;
+      height: 800px;
       background-color: #333;
       border-radius: 15px;
       margin-top: 30px;
@@ -45,7 +45,7 @@
 
     .pegs {
       position: absolute;
-      top: 20px;
+      top: 50px;
       width: 100%;
       height: 85%;
       display: grid;
@@ -56,7 +56,7 @@
     .row {
       display: grid;
       grid-template-columns: repeat(auto-fit, 40px);
-      gap: 15px;
+      gap: 10px;
       justify-content: center;
     }
 
@@ -77,7 +77,7 @@
     }
 
     .slot {
-      width: 50px;
+      width: 60px;
       height: 50px;
       background-color: #007bff;
       border-radius: 5px;
@@ -85,7 +85,7 @@
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-size: 0.9rem;
+      font-size: 1rem;
       font-weight: bold;
     }
 
@@ -95,6 +95,28 @@
 
     .slot.yellow {
       background-color: #f1c40f;
+    }
+
+    .drop-points {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-evenly;
+      padding: 10px 0;
+    }
+
+    .drop-point {
+      width: 20px;
+      height: 20px;
+      background-color: #28a745;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .drop-point:hover {
+      transform: scale(1.2);
     }
 
     .ball {
@@ -133,8 +155,9 @@
 <body>
   <div class="container">
     <h1>Plinko</h1>
-    <p>Drop the ball and watch it bounce through the pyramid!</p>
+    <p>Click a drop point to release the ball and watch it bounce!</p>
     <div class="plinko-board">
+      <div class="drop-points" id="dropPoints"></div>
       <div class="pegs" id="pegs"></div>
       <div class="slots" id="slots">
         <div class="slot red">x0.2</div>
@@ -145,17 +168,17 @@
         <div class="slot">x10</div>
         <div class="slot">x5</div>
         <div class="slot yellow">x0.5</div>
-        <div class="slot red">x50</div>
+        <div class="slot red">x0.2</div>
       </div>
       <div class="ball" id="ball"></div>
     </div>
-    <button class="play-button" onclick="dropBall()">Drop Ball</button>
     <p id="result" class="result-message"></p>
   </div>
 
   <script>
     function createPyramid() {
       const pegs = document.getElementById("pegs");
+      const dropPoints = document.getElementById("dropPoints");
 
       // Create rows of pegs for the pyramid
       for (let row = 0; row < 12; row++) {
@@ -170,23 +193,31 @@
 
         pegs.appendChild(rowDiv);
       }
+
+      // Create drop points
+      for (let i = 0; i < 9; i++) {
+        const dropPoint = document.createElement("div");
+        dropPoint.classList.add("drop-point");
+        dropPoint.setAttribute("onclick", `dropBall(${i})`);
+        dropPoints.appendChild(dropPoint);
+      }
     }
 
-    function dropBall() {
+    function dropBall(startingPoint) {
       const ball = document.getElementById("ball");
       const slots = document.querySelectorAll(".slot");
       const result = document.getElementById("result");
 
       // Initialize ball position
       ball.style.display = "block";
-      ball.style.top = "20px";
-      ball.style.left = "50%";
+      ball.style.top = "50px";
+      ball.style.left = `${10 + startingPoint * 10}%`;
 
-      let top = 20; // Starting vertical position
-      let left = 50; // Centered horizontally
+      let top = 50; // Starting vertical position
+      let left = 10 + startingPoint * 10; // Horizontal starting point
 
       const interval = setInterval(() => {
-        if (top >= 650) {
+        if (top >= 750) {
           // Stop ball animation when it reaches the bottom
           clearInterval(interval);
 
@@ -197,11 +228,11 @@
           // Display result message
           result.innerText = `🎯 The ball landed in ${slotMultiplier}!`;
           result.style.color =
-            slotMultiplier === "x50"
-              ? "#e74c3c"
-              : slotMultiplier === "x10" || slotMultiplier === "x5"
+            slotMultiplier === "x10" || slotMultiplier === "x5"
               ? "#f1c40f"
-              : "#ffc107"; // Rare multipliers in red or yellow
+              : slotMultiplier === "x0.2"
+              ? "#e74c3c"
+              : "#ffc107";
           return;
         }
 
