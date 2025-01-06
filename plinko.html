@@ -11,71 +11,104 @@
       padding: 0;
       background-color: #1e1e2f;
       color: #fff;
-      text-align: center;
-    }
-
-    .container {
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       height: 100vh;
-      padding: 20px;
     }
 
-    h1 {
-      font-size: 3rem;
-      color: #ffcc00;
-      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    .game-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 90%;
+      max-width: 1200px;
+    }
+
+    .bet-panel {
+      width: 30%;
+      background-color: #2a2f3a;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .bet-panel h2 {
+      font-size: 1.5rem;
+      color: #fff;
       margin-bottom: 20px;
+    }
+
+    .bet-panel label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      color: #ccc;
+    }
+
+    .bet-panel input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .bet-panel button {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .bet-panel button:hover {
+      background-color: #218838;
     }
 
     .plinko-board {
       position: relative;
-      width: 500px;
-      height: 800px;
+      width: 60%;
       background-color: #333;
-      border-radius: 15px;
-      margin-top: 30px;
+      border-radius: 10px;
+      padding: 20px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      padding-bottom: 20px;
     }
 
     .pegs {
       position: absolute;
-      top: 50px;
-      width: 100%;
-      height: 85%;
-      display: grid;
-      justify-content: center;
-      align-items: start;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, 40px);
-      gap: 20px;
+    .peg-row {
+      display: flex;
       justify-content: center;
+      gap: 15px;
+      margin-bottom: 15px;
     }
 
     .peg {
-      width: 15px;
-      height: 15px;
+      width: 10px;
+      height: 10px;
       background-color: #fff;
       border-radius: 50%;
     }
 
     .slots {
       display: flex;
-      justify-content: space-evenly;
-      width: 100%;
-      position: absolute;
-      bottom: 0;
-      padding: 10px 0;
+      justify-content: space-between;
+      margin-top: 20px;
+      position: relative;
     }
 
     .slot {
@@ -87,7 +120,7 @@
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-size: 0.9rem;
+      font-size: 1rem;
       font-weight: bold;
     }
 
@@ -108,65 +141,50 @@
       z-index: 10;
       display: none;
     }
-
-    .play-button {
-      background-color: #28a745;
-      color: #fff;
-      font-size: 1.5rem;
-      padding: 15px 30px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.2s ease, background-color 0.2s ease;
-      margin-top: 20px;
-    }
-
-    .play-button:hover {
-      background-color: #218838;
-      transform: scale(1.05);
-    }
-
-    .result-message {
-      margin-top: 20px;
-      font-size: 1.5rem;
-    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Plinko</h1>
-    <p>Press "Drop Ball" to play!</p>
+  <div class="game-container">
+    <!-- Betting Panel -->
+    <div class="bet-panel">
+      <h2>Betting Panel</h2>
+      <label for="betAmount">Bet Amount (ς):</label>
+      <input type="number" id="betAmount" placeholder="Enter amount" />
+      <label for="numberOfBets">Number of Bets:</label>
+      <input type="number" id="numberOfBets" placeholder="Enter number of bets" />
+      <button onclick="startGame()">Start Game</button>
+    </div>
+
+    <!-- Plinko Board -->
     <div class="plinko-board">
       <div class="pegs" id="pegs"></div>
-      <div class="slots" id="slots">
-        <div class="slot red">0.2x</div>
-        <div class="slot yellow">0.5x</div>
-        <div class="slot">1x</div>
-        <div class="slot">1.5x</div>
+      <div class="slots">
+        <div class="slot red">33x</div>
+        <div class="slot yellow">11x</div>
+        <div class="slot">4x</div>
         <div class="slot">2x</div>
-        <div class="slot">1.5x</div>
         <div class="slot">1x</div>
-        <div class="slot yellow">0.5x</div>
-        <div class="slot red">0.2x</div>
+        <div class="slot">1x</div>
+        <div class="slot">2x</div>
+        <div class="slot">4x</div>
+        <div class="slot yellow">11x</div>
+        <div class="slot red">33x</div>
       </div>
       <div class="ball" id="ball"></div>
     </div>
-    <button class="play-button" onclick="dropBall()">Drop Ball</button>
-    <p id="result" class="result-message"></p>
   </div>
 
   <script>
-    function createPyramid() {
-      const pegs = document.getElementById("pegs");
+    function createPegs() {
+      const pegs = document.getElementById('pegs');
 
-      // Create rows of pegs for the triangle
       for (let row = 0; row < 12; row++) {
-        const rowDiv = document.createElement("div");
-        rowDiv.classList.add("row");
+        const rowDiv = document.createElement('div');
+        rowDiv.classList.add('peg-row');
 
         for (let col = 0; col <= row; col++) {
-          const peg = document.createElement("div");
-          peg.classList.add("peg");
+          const peg = document.createElement('div');
+          peg.classList.add('peg');
           rowDiv.appendChild(peg);
         }
 
@@ -174,53 +192,43 @@
       }
     }
 
-    function dropBall() {
-      const ball = document.getElementById("ball");
-      const slots = document.querySelectorAll(".slot");
-      const result = document.getElementById("result");
+    function startGame() {
+      const ball = document.getElementById('ball');
+      const slots = document.querySelectorAll('.slot');
 
-      // Initialize ball position
-      ball.style.display = "block";
-      ball.style.top = "20px";
-      ball.style.left = "50%";
+      // Position ball at the top
+      ball.style.display = 'block';
+      ball.style.top = '20px';
+      ball.style.left = '50%';
 
-      let top = 20; // Starting vertical position
-      let left = 50; // Centered horizontally
+      let top = 20;
+      let left = 50;
 
       const interval = setInterval(() => {
-        if (top >= 750) {
-          // Stop ball animation when it reaches the bottom
+        if (top >= 600) {
           clearInterval(interval);
 
-          // Determine the landing slot
-          const landingSlotIndex = Math.floor(left / (100 / slots.length));
-          const slotMultiplier = slots[landingSlotIndex]?.innerText || "1x";
+          // Determine landing slot
+          const landingSlotIndex = Math.floor(Math.random() * slots.length);
+          const slotMultiplier = slots[landingSlotIndex]?.innerText;
 
-          // Display result message
-          result.innerText = `🎯 The ball landed in ${slotMultiplier}!`;
-          result.style.color =
-            slotMultiplier === "0.2x" || slotMultiplier === "0.5x"
-              ? "#e74c3c"
-              : "#007bff";
+          alert(`🎉 The ball landed in ${slotMultiplier}`);
           return;
         }
 
-        // Simulate ball bouncing left or right randomly
         top += 20;
         left += Math.random() > 0.5 ? 5 : -5;
 
-        // Keep the ball within the board boundaries
         if (left < 5) left = 5;
         if (left > 95) left = 95;
 
-        // Update ball position
         ball.style.top = `${top}px`;
         ball.style.left = `${left}%`;
-      }, 100); // Move ball every 100ms
+      }, 100);
     }
 
-    // Initialize the pyramid of pegs when the page loads
-    window.onload = createPyramid;
+    // Initialize the pegs when the page loads
+    window.onload = createPegs;
   </script>
 </body>
 </html>
