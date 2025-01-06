@@ -1,33 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Westwood Casino - Plinko</title>
-    <link rel="stylesheet" href="css/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plinko - Westwood Casino</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      color: #ffcc00;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    }
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #ccc;
+    }
+    .game-area {
+      margin-top: 30px;
+    }
+    .game-image {
+      width: 300px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      margin-bottom: 20px;
+    }
+    .play-button {
+      background-color: #007bff;
+      color: #fff;
+      font-size: 1.2rem;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .play-button:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #ccc;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .back-link:hover {
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Plinko Game</h1>
-        <p>Drop the ball and see where it lands!</p>
-    </header>
-    <main>
-        <section id="plinko-board">
-            <div id="board-container">
-                <!-- Plinko board structure -->
-                <div id="pegs"></div>
-                <div id="ball" class="hidden"></div>
-            </div>
-            <button id="drop-button" onclick="dropBall()">Drop Ball</button>
-        </section>
-        <section id="results">
-            <p id="plinko-result"></p>
-        </section>
-        <button onclick="navigateTo('dashboard.html')">Back to Dashboard</button>
-    </main>
-    <footer>
-        <p>Westwood Casino © 2025 | All rights reserved</p>
-    </footer>
-    <script src="js/plinko.js"></script>
+  <div class="container">
+    <h1>Plinko</h1>
+    <p>Drop the ball and see where it lands!</p>
+    <div class="game-area">
+      <img src="plinko.png" alt="Plinko Board" class="game-image">
+      <button class="play-button">Play Now</button>
+    </div>
+    <a href="index.html" class="back-link">← Back to Home</a>
+  </div>
 </body>
 </html>
