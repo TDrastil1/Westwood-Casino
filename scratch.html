@@ -47,26 +47,33 @@
       font-size: 1.5rem;
       color: #28a745;
       z-index: 2;
+      visibility: hidden;
     }
 
     .scratch-overlay {
       position: absolute;
       width: 100%;
       height: 100%;
-      background-color: #bbb;
+      background: #bbb;
       z-index: 3;
-      cursor: none;
     }
 
     .coin {
-      position: absolute;
-      width: 30px;
-      height: 30px;
+      position: fixed;
+      bottom: 50px;
+      right: 50px;
+      width: 50px;
+      height: 50px;
       background-color: #ffd700;
       border-radius: 50%;
-      pointer-events: none;
-      z-index: 4;
+      cursor: pointer;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #333;
     }
 
     .play-button {
@@ -101,19 +108,18 @@
 <body>
   <div class="container">
     <h1>Scratch-Offs</h1>
-    <p>Use the coin to scratch the ticket and reveal your prize!</p>
+    <p>Click the coin to scratch the ticket and reveal your prize!</p>
     <div class="scratch-card">
       <div class="hidden-message" id="hiddenMessage">🎉 You Win 50 ς!</div>
       <div class="scratch-overlay" id="scratchOverlay"></div>
-      <div class="coin" id="coin"></div>
     </div>
+    <div class="coin" onclick="revealPrize()">💰</div>
     <a href="index.html" class="back-link">← Back to Home</a>
   </div>
 
   <script>
-    const scratchOverlay = document.getElementById('scratchOverlay');
-    const coin = document.getElementById('coin');
     const hiddenMessage = document.getElementById('hiddenMessage');
+    const scratchOverlay = document.getElementById('scratchOverlay');
 
     // Randomize the prize
     const outcomes = [
@@ -139,39 +145,11 @@
     hiddenMessage.innerText = selectedOutcome.message;
     hiddenMessage.style.color = selectedOutcome.color;
 
-    // Show the coin
-    document.body.addEventListener('mousemove', (e) => {
-      coin.style.left = `${e.pageX - 15}px`;
-      coin.style.top = `${e.pageY - 15}px`;
-    });
-
-    // Scratch effect
-    scratchOverlay.addEventListener('mousemove', (e) => {
-      const { left, top } = scratchOverlay.getBoundingClientRect();
-      const x = e.clientX - left;
-      const y = e.clientY - top;
-
-      const ctx = scratchOverlay.getContext('2d');
-      ctx.beginPath();
-      ctx.arc(x, y, 20, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    // Initialize scratch overlay
-    function initScratchOverlay() {
-      const canvas = document.createElement('canvas');
-      canvas.width = scratchOverlay.offsetWidth;
-      canvas.height = scratchOverlay.offsetHeight;
-      scratchOverlay.appendChild(canvas);
-
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#bbb';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      scratchOverlay.removeEventListener('mousemove', scratch);
+    // Reveal prize when coin is clicked
+    function revealPrize() {
+      scratchOverlay.style.display = 'none';
+      hiddenMessage.style.visibility = 'visible';
     }
-
-    window.onload = initScratchOverlay;
   </script>
 </body>
 </html>
