@@ -27,46 +27,74 @@
       font-size: 3rem;
       color: #ffcc00;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-      margin-bottom: 20px;
     }
 
     .slots-machine {
+      position: relative;
       display: flex;
       justify-content: center;
-      gap: 15px;
-      padding: 20px;
-      background: #333;
-      border-radius: 15px;
+      align-items: center;
       margin-bottom: 20px;
     }
 
-    .slot {
+    .reel {
       width: 80px;
-      height: 80px;
-      background: #444;
-      color: #ffcc00;
-      font-size: 2rem;
+      height: 100px;
+      background-color: #444;
+      margin: 0 10px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      font-size: 2rem;
+      color: #ffcc00;
+      overflow: hidden;
+      position: relative;
     }
 
-    .play-button {
-      background-color: #28a745;
-      color: #fff;
-      font-size: 1.5rem;
-      padding: 15px 30px;
-      border: none;
-      border-radius: 10px;
+    .reel .symbols {
+      position: absolute;
+      animation: spin infinite 0.5s linear;
+    }
+
+    @keyframes spin {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-100%); }
+    }
+
+    .lever {
+      position: absolute;
+      right: -80px;
+      width: 30px;
+      height: 100px;
+      background-color: #555;
+      border-radius: 15px;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.3s;
+      transition: transform 0.2s ease-in-out;
     }
 
-    .play-button:hover {
-      background-color: #218838;
-      transform: scale(1.05);
+    .lever:hover {
+      transform: scale(1.1);
+    }
+
+    .lever-ball {
+      width: 30px;
+      height: 30px;
+      background-color: #ffcc00;
+      border-radius: 50%;
+      position: absolute;
+      top: 10px;
+      left: 0;
+      transition: top 0.2s ease-in-out;
+    }
+
+    .lever:active .lever-ball {
+      top: 60px;
+    }
+
+    .result-message {
+      margin-top: 20px;
+      font-size: 1.5rem;
     }
 
     .back-link {
@@ -80,74 +108,80 @@
     .back-link:hover {
       color: #fff;
     }
-
-    .result-message {
-      margin-top: 20px;
-      font-size: 1.5rem;
-    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Slots</h1>
-    <p>Spin the reels and test your luck!</p>
+    <p>Pull the lever to spin the reels and test your luck!</p>
     <div class="slots-machine">
-      <div class="slot" id="slot1">🍒</div>
-      <div class="slot" id="slot2">⭐</div>
-      <div class="slot" id="slot3">🍋</div>
-      <div class="slot" id="slot4">🍇</div>
+      <div class="reel" id="reel1">
+        <div class="symbols">🍒🍋🍇⭐7🍒🍋🍇⭐7</div>
+      </div>
+      <div class="reel" id="reel2">
+        <div class="symbols">⭐7🍇🍋🍒⭐7🍇🍋🍒</div>
+      </div>
+      <div class="reel" id="reel3">
+        <div class="symbols">🍇🍋🍒⭐7🍇🍋🍒⭐7</div>
+      </div>
+      <div class="reel" id="reel4">
+        <div class="symbols">🍋🍒7⭐🍇🍋🍒7⭐🍇</div>
+      </div>
+      <div class="lever" onclick="pullLever()">
+        <div class="lever-ball"></div>
+      </div>
     </div>
-    <button class="play-button" onclick="spinSlots()">Play Now</button>
     <p id="result" class="result-message"></p>
     <a href="index.html" class="back-link">← Back to Home</a>
   </div>
 
   <script>
-    function spinSlots() {
-      // Symbols with weighted probabilities for house advantage
-      const symbols = [
-        { symbol: '🍒', weight: 30 },  // Common
-        { symbol: '🍋', weight: 25 },  // Common
-        { symbol: '🍇', weight: 20 },  // Less common
-        { symbol: '⭐', weight: 15 },  // Rare
-        { symbol: '7', weight: 10 }   // Very rare
+    function pullLever() {
+      const reels = [
+        document.getElementById('reel1'),
+        document.getElementById('reel2'),
+        document.getElementById('reel3'),
+        document.getElementById('reel4')
       ];
 
-      // Create a weighted random selection
-      function getRandomSymbol() {
-        const totalWeight = symbols.reduce((sum, item) => sum + item.weight, 0);
-        const randomWeight = Math.floor(Math.random() * totalWeight);
-
-        let cumulativeWeight = 0;
-        for (const item of symbols) {
-          cumulativeWeight += item.weight;
-          if (randomWeight < cumulativeWeight) {
-            return item.symbol;
-          }
-        }
-      }
-
-      // Spin the slots
-      const slot1 = getRandomSymbol();
-      const slot2 = getRandomSymbol();
-      const slot3 = getRandomSymbol();
-      const slot4 = getRandomSymbol();
-
-      // Update slot visuals
-      document.getElementById('slot1').innerText = slot1;
-      document.getElementById('slot2').innerText = slot2;
-      document.getElementById('slot3').innerText = slot3;
-      document.getElementById('slot4').innerText = slot4;
-
-      // Check for results
+      const symbols = ['🍒', '🍋', '🍇', '⭐', '7'];
       const result = document.getElementById('result');
-      if (slot1 === slot2 && slot2 === slot3 && slot3 === slot4) {
+
+      // Reset result message
+      result.innerText = '';
+      result.style.color = '';
+
+      // Spin each reel with a delay
+      reels.forEach((reel, index) => {
+        const reelSymbols = reel.querySelector('.symbols');
+        reelSymbols.style.animation = 'spin infinite 0.5s linear';
+        
+        setTimeout(() => {
+          // Stop spinning after a delay
+          reelSymbols.style.animation = 'none';
+
+          // Randomly choose a symbol
+          const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+          reelSymbols.innerText = randomSymbol;
+
+          // Check results after the last reel stops
+          if (index === reels.length - 1) {
+            setTimeout(() => {
+              checkResults(reels);
+            }, 500);
+          }
+        }, 1000 + index * 500); // Stagger stopping times
+      });
+    }
+
+    function checkResults(reels) {
+      const result = document.getElementById('result');
+      const results = reels.map((reel) => reel.querySelector('.symbols').innerText);
+
+      if (results.every((symbol) => symbol === results[0])) {
         result.innerText = `🎉 JACKPOT! You win 200 ς!`;
         result.style.color = '#28a745';
-      } else if (
-        slot1 === slot2 && slot2 === slot3 ||
-        slot2 === slot3 && slot3 === slot4
-      ) {
+      } else if (results.slice(0, 3).every((symbol) => symbol === results[0])) {
         result.innerText = `✨ You win 50 ς!`;
         result.style.color = '#ffc107';
       } else {
