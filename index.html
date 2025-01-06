@@ -7,10 +7,10 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #1e1e2f;
-      color: #fff;
       margin: 0;
       padding: 0;
+      background-color: #0b3d20; /* Dark green for poker table */
+      color: #fff;
       text-align: center;
     }
 
@@ -19,11 +19,10 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       padding: 20px;
-      background-color: #0a522e; /* Green poker table color */
-      background-image: radial-gradient(circle, rgba(0, 0, 0, 0.1) 20%, transparent 20%);
-      background-size: 30px 30px;
+      background: radial-gradient(circle, rgba(0, 0, 0, 0.2) 10%, transparent 10%) #0b3d20;
+      background-size: 50px 50px;
     }
 
     h1 {
@@ -46,10 +45,10 @@
       gap: 30px;
     }
 
-    .token {
+    .chip {
       width: 150px;
       height: 150px;
-      background-color: #ff0000;
+      background-color: #007bff; /* Default blue for chips */
       border-radius: 50%;
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
       display: flex;
@@ -60,31 +59,44 @@
       color: #fff;
       font-size: 1.2rem;
       font-weight: bold;
-      transition: transform 0.3s, box-shadow 0.3s;
       position: relative;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
-    .token:hover {
+    .chip:hover {
       transform: scale(1.1);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7);
     }
 
-    .token::before {
+    .chip::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 5%;
+      left: 5%;
+      width: 90%;
+      height: 90%;
       border-radius: 50%;
       border: 5px solid #fff;
-      z-index: -1;
+      z-index: 0;
     }
 
-    .token img {
-      width: 60px;
-      height: 60px;
+    .chip img {
+      width: 50px;
+      height: 50px;
       margin-bottom: 10px;
+      z-index: 1;
+    }
+
+    .chip.red {
+      background-color: #e74c3c; /* Red chip */
+    }
+
+    .chip.green {
+      background-color: #27ae60; /* Green chip */
+    }
+
+    .chip.yellow {
+      background-color: #f1c40f; /* Yellow chip */
     }
 
     footer {
@@ -99,15 +111,15 @@
     <h1>Welcome to Westwood Casino</h1>
     <p>Select a game below to start playing!</p>
     <div class="game-options">
-      <a href="slots.html" class="token">
+      <a href="slots.html" class="chip red">
         <img src="slots.png" alt="Slots">
         Slots
       </a>
-      <a href="plinko.html" class="token" style="background-color: #007bff;">
+      <a href="plinko.html" class="chip green">
         <img src="plinko.png" alt="Plinko">
         Plinko
       </a>
-      <a href="scratch.html" class="token" style="background-color: #f1c40f;">
+      <a href="scratch.html" class="chip yellow">
         <img src="scratch.png" alt="Scratch-Offs">
         Scratch-Offs
       </a>
