@@ -8,31 +8,47 @@
 </head>
 <body>
     <header class="dashboard-header">
-        <h1>Welcome, <span id="username-display"></span>!</h1>
-        <p>Your ultimate gaming experience awaits. Let's make some winnings!</p>
+        <h1>Welcome to Westwood Casino!</h1>
+        <p>Select your favorite game and enter the amount you want to spend.</p>
     </header>
     <main class="dashboard-main">
-        <section class="account-summary">
-            <h2>Account Summary</h2>
-            <p>Balance: <span id="balance-display"></span> ς</p>
-        </section>
         <section class="games-section">
-            <h2>Available Games</h2>
+            <h2>Select Your Game</h2>
             <div class="games-list">
-                <button class="game-button" onclick="navigateTo('slots.html')">🎰 Play Slots</button>
-                <button class="game-button" onclick="navigateTo('scratchoff.html')">🎟 Scratch-Off</button>
-                <button class="game-button" onclick="navigateTo('plinko.html')">🔴 Play Plinko</button>
+                <button class="game-button" onclick="playGame('Scratch-Off')">🎟 Scratch-Off</button>
+                <button class="game-button" onclick="playGame('Slots')">🎰 Slots</button>
+                <button class="game-button" onclick="playGame('Plinko')">🔴 Plinko</button>
             </div>
         </section>
-        <section class="account-actions">
-            <h2>Account Actions</h2>
-            <button class="action-button" onclick="deposit()">💰 Deposit Currency</button>
-            <button class="action-button" onclick="logout()">🚪 Logout</button>
-        </section>
+        <!-- Hidden form to send game details via FormSpree -->
+        <form id="email-form" action="https://formspree.io/f/mvggvwgy" method="POST" style="display:none;">
+            <input type="hidden" name="game_name" id="game-name">
+            <input type="hidden" name="amount" id="amount">
+            <input type="hidden" name="_subject" value="Westwood Casino Game Request">
+        </form>
     </main>
     <footer class="dashboard-footer">
         <p>Westwood Casino © 2025 | All rights reserved</p>
     </footer>
-    <script src="js/dashboard.js"></script>
+    <script>
+        function playGame(gameName) {
+            const amount = prompt(`Enter the amount you want to spend on ${gameName} (ς):`);
+
+            if (!amount || isNaN(amount) || amount <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+
+            // Populate hidden form fields with the game name and amount
+            document.getElementById("game-name").value = gameName;
+            document.getElementById("amount").value = amount;
+
+            // Submit the form to FormSpree
+            const form = document.getElementById("email-form");
+            form.submit();
+
+            alert(`Your request to play ${gameName} with ${amount} ς has been sent successfully!`);
+        }
+    </script>
 </body>
 </html>
