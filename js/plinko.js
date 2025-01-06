@@ -1,62 +1,122 @@
-function createPyramid() {
-  const pegs = document.getElementById("pegs");
+const buckets = {
+  drops: 0,
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 0,
+};
 
-  // Create rows of pegs for the pyramid
-  for (let row = 0; row < 10; row++) {
-    const rowDiv = document.createElement("div");
-    rowDiv.classList.add("row");
+// Update individual bucket statistics
+function updateStat(selector, count, percent) {
+  document.querySelector(selector).textContent = `${count} ς`;
+  document.querySelector(`${selector}_percent`).textContent = percent;
+}
 
-    for (let col = 0; col <= row; col++) {
-      const peg = document.createElement("div");
-      peg.classList.add("peg");
-      rowDiv.appendChild(peg);
+// Update all buckets and percentages
+function updateBuckets() {
+  const selectors = ['#one', '#two', '#three', '#four', '#five'];
+  selectors.forEach((selector, i) => {
+    const count = buckets[i + 1];
+    const percent = buckets.drops > 0
+      ? ((buckets[i + 1] / buckets.drops) * 100).toFixed(2) + '%'
+      : '0.00%';
+    updateStat(selector, count, percent);
+  });
+}
+
+// Randomly choose left or right (-1 or 1)
+function getRandom() {
+  return Math.random() < 0.5 ? -1 : 1;
+}
+
+// Assign chip to a bucket based on its final position
+function getBucket(chip) {
+  const total = chip.path.reduce((sum, step) => sum + step, 0);
+  const bucketMap = { '-4': 1, '-2': 2, '0': 3, '2': 4, '4': 5 };
+  const bucket = bucketMap[total] || 3;
+  buckets[bucket]++;
+  buckets.drops++;
+  updateBuckets();
+  chip.el.remove();
+}
+
+// Chip class to manage individual chip movements
+class Chip {
+  constructor(boardId, speed) {
+    this.board = document.getElementById(boardId);
+    this.speed = speed;
+    this.location = {
+      x: this.board.offsetWidth / 2,
+      y: 0,
+    };
+    this.lastStep = 0;
+
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    this.board.appendChild(chip);
+    this.el = chip;
+
+    this.el.style.left = `${this.location.x}px`;
+    this.el.style.top = `${this.location.y}px`;
+  }
+
+  start() {
+    // Generate a random path for the chip
+    this.path = Array.from({ length: 4 }, () => getRandom());
+    this.nextStep();
+  }
+
+  nextStep() {
+    if (this.lastStep < 4) {
+      const offset = this.path[this.lastStep] < 0 ? -2 : 2;
+      this.animateTo({
+        x: offset,
+        y: 2,
+      });
+    } else {
+      getBucket(this);
     }
+  }
 
-    pegs.appendChild(rowDiv);
+  animateTo(offset) {
+    const step = {
+      x: this.board.offsetWidth / 17,
+      y: this.board.offsetHeight / 11,
+    };
+
+    this.el.style.transition = `all ${this.speed}ms linear`;
+    this.el.style.left = `${parseFloat(this.el.style.left) + step.x * offset.x}px`;
+    this.el.style.top = `${parseFloat(this.el.style.top) + step.y * offset.y}px`;
+
+    setTimeout(() => {
+      this.lastStep++;
+      this.nextStep();
+    }, this.speed);
   }
 }
 
-function dropBall() {
-  const ball = document.getElementById("ball");
-  const slots = document.querySelectorAll(".slot");
-  const result = document.getElementById("result");
+let faucetId;
 
-  // Initialize ball position
-  ball.style.display = "block";
-  ball.style.top = "20px";
-  ball.style.left = "50%";
-
-  let top = 20; // Starting vertical position
-  let left = 50; // Centered horizontally
-
-  const interval = setInterval(() => {
-    if (top >= 550) {
-      // Stop ball animation when it reaches the bottom
-      clearInterval(interval);
-
-      // Determine the landing slot
-      const landingSlotIndex = Math.floor(left / (100 / slots.length));
-      const slotMultiplier = slots[landingSlotIndex]?.innerText || "1x";
-
-      // Display result message
-      result.innerText = `🎯 The ball landed in slot ${slotMultiplier}!`;
-      result.style.color = landingSlotIndex % 2 === 0 ? "#ffc107" : "#e74c3c"; // Yellow for even slots, red for odd
-      return;
+// Event listeners for user interactions
+document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('keydown', (e) => {
+    e.preventDefault();
+    if (e.code === 'Space') {
+      // Drop a single chip
+      const chip = new Chip('plinko-board', 500);
+      chip.start();
+    } else if (e.code === 'KeyO') {
+      // Toggle automatic chip drops
+      if (!faucetId) {
+        faucetId = setInterval(() => {
+          const chip = new Chip('plinko-board', 500);
+          chip.start();
+        }, 200);
+      } else {
+        clearInterval(faucetId);
+        faucetId = null;
+      }
     }
-
-    // Simulate ball bouncing left or right randomly
-    top += 20;
-    left += Math.random() > 0.5 ? 5 : -5;
-
-    // Keep the ball within the board boundaries
-    if (left < 5) left = 5;
-    if (left > 95) left = 95;
-
-    // Update ball position
-    ball.style.top = `${top}px`;
-    ball.style.left = `${left}%`;
-  }, 100); // Move ball every 100ms
-}
-
-// Initialize the pyramid of pegs when the page loads
-window.onload = createPyramid;
+  });
+});
