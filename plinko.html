@@ -6,233 +6,205 @@
   <title>Plinko - Westwood Casino</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+      font-family: sans-serif;
       background-color: #1e1e2f;
       color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      text-align: center;
+      margin: 0;
+      padding: 0;
     }
 
-    .game-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      width: 90%;
-      max-width: 1200px;
+    h1 {
+      color: #ffcc00;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
     }
 
-    .bet-panel {
-      width: 30%;
-      background-color: #2a2f3a;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    }
-
-    .bet-panel h2 {
-      font-size: 1.5rem;
-      color: #fff;
-      margin-bottom: 20px;
-    }
-
-    .bet-panel label {
-      display: block;
-      margin-bottom: 10px;
+    p {
+      margin: 20px 0;
       font-size: 1rem;
-      color: #ccc;
     }
 
-    .bet-panel input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 20px;
-      border: none;
-      border-radius: 5px;
-      background-color: #333;
-      color: #fff;
-    }
-
-    .bet-panel button {
-      width: 100%;
-      padding: 10px;
-      background-color: #28a745;
-      border: none;
-      border-radius: 5px;
-      color: #fff;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-
-    .bet-panel button:hover {
-      background-color: #218838;
-    }
-
-    .plinko-board {
-      position: relative;
-      width: 60%;
-      background-color: #333;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    }
-
-    .pegs {
+    div.chip {
       position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .peg-row {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
-
-    .peg {
       width: 10px;
       height: 10px;
-      background-color: #fff;
       border-radius: 50%;
+      background-color: blue;
     }
 
-    .slots {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
+    #plinko-board {
       position: relative;
+      margin: 2em auto;
+      width: 400px;
+      height: 200px;
+      background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/25877/board.png');
+      background-size: cover;
     }
 
-    .slot {
-      width: 50px;
-      height: 50px;
-      background-color: #007bff;
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: bold;
-    }
-
-    .slot.red {
-      background-color: #e74c3c;
-    }
-
-    .slot.yellow {
-      background-color: #f1c40f;
-    }
-
-    .slot.gray {
-      background-color: #95a5a6;
-    }
-
-    .ball {
+    ul.buckets,
+    ul.percents {
       position: absolute;
-      width: 20px;
-      height: 20px;
-      background-color: #ffc107;
-      border-radius: 50%;
-      z-index: 10;
-      display: none;
+      left: 0;
+      width: 100%;
+      padding: 0;
+      margin: 5px 0;
+    }
+
+    ul.buckets {
+      bottom: -2em;
+      border-bottom: 1px solid black;
+    }
+
+    ul.percents {
+      bottom: -3.5em;
+    }
+
+    ul.buckets li,
+    ul.percents li {
+      list-style: none;
+      float: left;
+      width: 31px;
+      text-align: center;
+      color: #fff;
     }
   </style>
 </head>
 <body>
-  <div class="game-container">
-    <!-- Betting Panel -->
-    <div class="bet-panel">
-      <h2>Betting Panel</h2>
-      <label for="betAmount">Bet Amount (ς):</label>
-      <input type="number" id="betAmount" placeholder="Enter amount" />
-      <label for="numberOfBets">Number of Bets:</label>
-      <input type="number" id="numberOfBets" placeholder="Enter number of bets" />
-      <button onclick="startGame()">Start Game</button>
-    </div>
-
-    <!-- Plinko Board -->
-    <div class="plinko-board">
-      <div class="pegs" id="pegs"></div>
-      <div class="slots">
-        <div class="slot gray">0.2x</div>
-        <div class="slot yellow">0.5x</div>
-        <div class="slot">1x</div>
-        <div class="slot">2x</div>
-        <div class="slot">4x</div>
-        <div class="slot">4x</div>
-        <div class="slot">2x</div>
-        <div class="slot">1x</div>
-        <div class="slot yellow">0.5x</div>
-        <div class="slot gray">0.2x</div>
-      </div>
-      <div class="ball" id="ball"></div>
-    </div>
+  <h1>Plinko</h1>
+  <p>
+    Press <strong>[Space]</strong> to drop a single puck, or hold it down to release multiple pucks. Each puck follows a 50% chance of going left or right at each peg.
+  </p>
+  <div id="plinko-board">
+    <ul class="buckets">
+      <li id="one">0 ς</li>
+      <li id="two">0 ς</li>
+      <li id="three">0 ς</li>
+      <li id="four">0 ς</li>
+      <li id="five">0 ς</li>
+    </ul>
+    <ul class="percents">
+      <li id="one_percent">0.00%</li>
+      <li id="two_percent">0.00%</li>
+      <li id="three_percent">0.00%</li>
+      <li id="four_percent">0.00%</li>
+      <li id="five_percent">0.00%</li>
+    </ul>
   </div>
 
   <script>
-    function createPegs() {
-      const pegs = document.getElementById('pegs');
+    const buckets = {
+      drops: 0,
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+      5: 0,
+    };
 
-      for (let row = 0; row < 12; row++) {
-        const rowDiv = document.createElement('div');
-        rowDiv.classList.add('peg-row');
+    function updateStat(selector, count, percent) {
+      document.querySelector(selector).textContent = `${count} ς`;
+      document.querySelector(`${selector}_percent`).textContent = percent;
+    }
 
-        for (let col = 0; col <= row; col++) {
-          const peg = document.createElement('div');
-          peg.classList.add('peg');
-          rowDiv.appendChild(peg);
+    function updateBuckets() {
+      const selectors = ['#one', '#two', '#three', '#four', '#five'];
+      selectors.forEach((selector, i) => {
+        const count = buckets[i + 1];
+        const percent = buckets.drops > 0
+          ? ((buckets[i + 1] / buckets.drops) * 100).toFixed(2) + '%'
+          : '0.00%';
+        updateStat(selector, count, percent);
+      });
+    }
+
+    function getRandom() {
+      return Math.random() < 0.5 ? -1 : 1;
+    }
+
+    function getBucket(chip) {
+      const total = chip.path.reduce((sum, step) => sum + step, 0);
+      const bucketMap = { '-4': 1, '-2': 2, '0': 3, '2': 4, '4': 5 };
+      const bucket = bucketMap[total] || 3;
+      buckets[bucket]++;
+      buckets.drops++;
+      updateBuckets();
+      chip.el.remove();
+    }
+
+    class Chip {
+      constructor(boardId, speed) {
+        this.board = document.getElementById(boardId);
+        this.speed = speed;
+        this.location = {
+          x: this.board.offsetWidth / 2,
+          y: 0,
+        };
+        this.lastStep = 0;
+
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        this.board.appendChild(chip);
+        this.el = chip;
+
+        this.el.style.left = `${this.location.x}px`;
+        this.el.style.top = `${this.location.y}px`;
+      }
+
+      start() {
+        this.path = Array.from({ length: 4 }, () => getRandom());
+        this.nextStep();
+      }
+
+      nextStep() {
+        if (this.lastStep < 4) {
+          const offset = this.path[this.lastStep] < 0 ? -2 : 2;
+          this.animateTo({
+            x: offset,
+            y: 2,
+          });
+        } else {
+          getBucket(this);
         }
+      }
 
-        pegs.appendChild(rowDiv);
+      animateTo(offset) {
+        const step = {
+          x: this.board.offsetWidth / 17,
+          y: this.board.offsetHeight / 11,
+        };
+
+        this.el.style.transition = `all ${this.speed}ms linear`;
+        this.el.style.left = `${parseFloat(this.el.style.left) + step.x * offset.x}px`;
+        this.el.style.top = `${parseFloat(this.el.style.top) + step.y * offset.y}px`;
+
+        setTimeout(() => {
+          this.lastStep++;
+          this.nextStep();
+        }, this.speed);
       }
     }
 
-    function startGame() {
-      const ball = document.getElementById('ball');
-      const slots = document.querySelectorAll('.slot');
+    let faucetId;
 
-      // Position ball at the top
-      ball.style.display = 'block';
-      ball.style.top = '20px';
-      ball.style.left = '50%';
-
-      let top = 20;
-      let left = 50;
-
-      const interval = setInterval(() => {
-        if (top >= 600) {
-          clearInterval(interval);
-
-          // Determine landing slot
-          const landingSlotIndex = Math.floor(Math.random() * slots.length);
-          const slotMultiplier = slots[landingSlotIndex]?.innerText;
-
-          alert(`🎉 The ball landed in ${slotMultiplier}`);
-          return;
+    document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('keydown', (e) => {
+        e.preventDefault();
+        if (e.code === 'Space') {
+          const chip = new Chip('plinko-board', 500);
+          chip.start();
+        } else if (e.code === 'KeyO') {
+          if (!faucetId) {
+            faucetId = setInterval(() => {
+              const chip = new Chip('plinko-board', 500);
+              chip.start();
+            }, 200);
+          } else {
+            clearInterval(faucetId);
+            faucetId = null;
+          }
         }
-
-        top += 20;
-        left += Math.random() > 0.5 ? 5 : -5;
-
-        if (left < 5) left = 5;
-        if (left > 95) left = 95;
-
-        ball.style.top = `${top}px`;
-        ball.style.left = `${left}%`;
-      }, 100);
-    }
-
-    // Initialize the pegs when the page loads
-    window.onload = createPegs;
+      });
+    });
   </script>
 </body>
 </html>
