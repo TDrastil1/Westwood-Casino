@@ -1,29 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Westwood Casino - Scratch-Off</title>
-    <link rel="stylesheet" href="css/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scratch-Offs - Westwood Casino</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      color: #ffcc00;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    }
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #ccc;
+    }
+    .game-area {
+      margin-top: 30px;
+    }
+    .game-image {
+      width: 300px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      margin-bottom: 20px;
+    }
+    .play-button {
+      background-color: #ffc107;
+      color: #000;
+      font-size: 1.2rem;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    .play-button:hover {
+      background-color: #e0a800;
+      transform: scale(1.05);
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #ccc;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .back-link:hover {
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Scratch-Off Game</h1>
-        <p>Scratch to reveal your prize!</p>
-    </header>
-    <main>
-        <section id="scratch-card">
-            <canvas id="scratchCanvas" width="300" height="200"></canvas>
-            <button id="reset-button" onclick="resetScratchCard()">Play Again</button>
-        </section>
-        <section id="results">
-            <p id="prize-message"></p>
-        </section>
-        <button onclick="navigateTo('dashboard.html')">Back to Dashboard</button>
-    </main>
-    <footer>
-        <p>Westwood Casino © 2025 | All rights reserved</p>
-    </footer>
-    <script src="js/scratchoff.js"></script>
+  <div class="container">
+    <h1>Scratch-Offs</h1>
+    <p>Scratch the ticket and reveal your prize!</p>
+    <div class="game-area">
+      <img src="scratch.png" alt="Scratch-Off Ticket" class="game-image">
+      <button class="play-button">Scratch Now</button>
+    </div>
+    <a href="index.html" class="back-link">← Back to Home</a>
+  </div>
 </body>
 </html>
