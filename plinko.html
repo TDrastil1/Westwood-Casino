@@ -30,8 +30,8 @@
 
     .plinko-board {
       position: relative;
-      width: 400px;
-      height: 600px;
+      width: 500px;
+      height: 700px;
       background-color: #333;
       border-radius: 15px;
       margin-top: 30px;
@@ -47,17 +47,17 @@
       position: absolute;
       top: 20px;
       width: 100%;
-      height: 90%;
+      height: 85%;
       display: grid;
-      grid-template-rows: repeat(10, 1fr);
       justify-content: center;
+      align-items: start;
     }
 
     .row {
       display: grid;
       grid-template-columns: repeat(auto-fit, 40px);
+      gap: 15px;
       justify-content: center;
-      gap: 5px;
     }
 
     .peg {
@@ -78,7 +78,7 @@
 
     .slot {
       width: 50px;
-      height: 40px;
+      height: 50px;
       background-color: #007bff;
       border-radius: 5px;
       display: flex;
@@ -137,16 +137,15 @@
     <div class="plinko-board">
       <div class="pegs" id="pegs"></div>
       <div class="slots" id="slots">
-        <div class="slot red">33x</div>
-        <div class="slot yellow">11x</div>
-        <div class="slot">4x</div>
-        <div class="slot">2x</div>
-        <div class="slot">1x</div>
-        <div class="slot">1x</div>
-        <div class="slot">2x</div>
-        <div class="slot">4x</div>
-        <div class="slot yellow">11x</div>
-        <div class="slot red">33x</div>
+        <div class="slot red">x0.2</div>
+        <div class="slot yellow">x0.5</div>
+        <div class="slot">x1</div>
+        <div class="slot">x2</div>
+        <div class="slot">x5</div>
+        <div class="slot">x10</div>
+        <div class="slot">x5</div>
+        <div class="slot yellow">x0.5</div>
+        <div class="slot red">x50</div>
       </div>
       <div class="ball" id="ball"></div>
     </div>
@@ -159,7 +158,7 @@
       const pegs = document.getElementById("pegs");
 
       // Create rows of pegs for the pyramid
-      for (let row = 0; row < 10; row++) {
+      for (let row = 0; row < 12; row++) {
         const rowDiv = document.createElement("div");
         rowDiv.classList.add("row");
 
@@ -178,27 +177,35 @@
       const slots = document.querySelectorAll(".slot");
       const result = document.getElementById("result");
 
+      // Initialize ball position
       ball.style.display = "block";
       ball.style.top = "20px";
       ball.style.left = "50%";
 
-      let top = 20; // Starting point of the ball
+      let top = 20; // Starting vertical position
       let left = 50; // Centered horizontally
 
       const interval = setInterval(() => {
-        if (top >= 550) {
-          // Ball reaches the bottom
+        if (top >= 650) {
+          // Stop ball animation when it reaches the bottom
           clearInterval(interval);
 
           // Determine the landing slot
-          const landingSlot = Math.floor(left / (100 / slots.length));
-          const slotMultiplier = slots[landingSlot]?.innerText || "1x";
-          result.innerText = `🎯 The ball landed in slot ${slotMultiplier}!`;
-          result.style.color = landingSlot % 2 === 0 ? "#ffc107" : "#e74c3c";
+          const landingSlotIndex = Math.floor(left / (100 / slots.length));
+          const slotMultiplier = slots[landingSlotIndex]?.innerText || "x1";
+
+          // Display result message
+          result.innerText = `🎯 The ball landed in ${slotMultiplier}!`;
+          result.style.color =
+            slotMultiplier === "x50"
+              ? "#e74c3c"
+              : slotMultiplier === "x10" || slotMultiplier === "x5"
+              ? "#f1c40f"
+              : "#ffc107"; // Rare multipliers in red or yellow
           return;
         }
 
-        // Simulate random bouncing off the pegs
+        // Simulate ball bouncing left or right randomly
         top += 20;
         left += Math.random() > 0.5 ? 5 : -5;
 
@@ -206,13 +213,14 @@
         if (left < 5) left = 5;
         if (left > 95) left = 95;
 
+        // Update ball position
         ball.style.top = `${top}px`;
         ball.style.left = `${left}%`;
-      }, 100);
+      }, 100); // Move ball every 100ms
     }
 
-    // Initialize the board
-    createPyramid();
+    // Initialize the pyramid of pegs when the page loads
+    window.onload = createPyramid;
   </script>
 </body>
 </html>
