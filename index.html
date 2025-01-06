@@ -50,7 +50,6 @@
       height: 150px;
       background-color: #007bff;
       border-radius: 50%;
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
       position: relative;
       display: flex;
       flex-direction: column;
@@ -61,6 +60,7 @@
       font-size: 1.2rem;
       font-weight: bold;
       transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
     }
 
     .chip:hover {
@@ -71,39 +71,30 @@
     .chip::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 5%;
+      left: 5%;
+      width: 90%;
+      height: 90%;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 30%, transparent 30%);
-      border: 8px solid white;
-      z-index: 0;
+      border: 6px solid #fff;
+      z-index: 1;
     }
 
     .chip::after {
       content: '';
       position: absolute;
-      top: 10px;
-      left: 10px;
-      width: calc(100% - 20px);
-      height: calc(100% - 20px);
+      top: 10%;
+      left: 10%;
+      width: 80%;
+      height: 80%;
       border-radius: 50%;
-      background: radial-gradient(circle, transparent 50%, rgba(255, 255, 255, 0.1) 50%);
+      border: 6px solid #007bff;
       z-index: 1;
     }
 
-    .chip .icon {
+    .chip .inner {
       z-index: 2;
-      width: 60px;
-      height: 60px;
-      background-color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      color: #007bff;
+      text-align: center;
     }
 
     .chip.red {
@@ -118,16 +109,16 @@
       background-color: #f1c40f;
     }
 
-    .chip.red .icon {
-      color: #e74c3c;
+    .chip.red::after {
+      border-color: #e74c3c;
     }
 
-    .chip.green .icon {
-      color: #27ae60;
+    .chip.green::after {
+      border-color: #27ae60;
     }
 
-    .chip.yellow .icon {
-      color: #f1c40f;
+    .chip.yellow::after {
+      border-color: #f1c40f;
     }
 
     footer {
@@ -142,17 +133,17 @@
     <h1>Welcome to Westwood Casino</h1>
     <p>Select a game below to start playing!</p>
     <div class="game-options">
+      <!-- Slots Button -->
       <a href="slots.html" class="chip red">
-        <div class="icon">🎰</div>
-        Slots
+        <div class="inner">🎰<br>Slots</div>
       </a>
+      <!-- Plinko Button -->
       <a href="plinko.html" class="chip green">
-        <div class="icon">🔽</div>
-        Plinko
+        <div class="inner">🔽<br>Plinko</div>
       </a>
+      <!-- Scratch-Offs Button -->
       <a href="scratch.html" class="chip yellow">
-        <div class="icon">🎟️</div>
-        Scratch-Offs
+        <div class="inner">🎟️<br>Scratch-Offs</div>
       </a>
     </div>
     <footer>
