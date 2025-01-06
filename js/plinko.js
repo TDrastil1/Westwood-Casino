@@ -1,56 +1,62 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const currentUser = localStorage.getItem("currentUser");
-    const users = JSON.parse(localStorage.getItem("users")) || {};
+function createPyramid() {
+  const pegs = document.getElementById("pegs");
 
-    if (!currentUser || !users[currentUser]) {
-        alert("You must log in to play Plinko.");
-        window.location.href = "index.html";
-        return;
+  // Create rows of pegs for the pyramid
+  for (let row = 0; row < 10; row++) {
+    const rowDiv = document.createElement("div");
+    rowDiv.classList.add("row");
+
+    for (let col = 0; col <= row; col++) {
+      const peg = document.createElement("div");
+      peg.classList.add("peg");
+      rowDiv.appendChild(peg);
     }
 
-    const boardContainer = document.getElementById("board-container");
-    const ball = document.getElementById("ball");
-    const resultMessage = document.getElementById("plinko-result");
-    const dropButton = document.getElementById("drop-button");
+    pegs.appendChild(rowDiv);
+  }
+}
 
-    const prizeSlots = [0, 50, 100, 200, 500]; // Possible prizes at the bottom slots
+function dropBall() {
+  const ball = document.getElementById("ball");
+  const slots = document.querySelectorAll(".slot");
+  const result = document.getElementById("result");
 
-    function dropBall() {
-        if (!ball.classList.contains("hidden")) {
-            alert("Finish the current game before dropping another ball.");
-            return;
-        }
+  // Initialize ball position
+  ball.style.display = "block";
+  ball.style.top = "20px";
+  ball.style.left = "50%";
 
-        ball.style.left = `${Math.random() * (boardContainer.clientWidth - 20)}px`;
-        ball.classList.remove("hidden");
+  let top = 20; // Starting vertical position
+  let left = 50; // Centered horizontally
 
-        let ballPosition = 0;
-        const fallInterval = setInterval(() => {
-            if (ballPosition >= boardContainer.clientHeight - 20) {
-                clearInterval(fallInterval);
-                handleBallLanding();
-            } else {
-                ballPosition += 5;
-                ball.style.top = `${ballPosition}px`;
-            }
-        }, 50);
+  const interval = setInterval(() => {
+    if (top >= 550) {
+      // Stop ball animation when it reaches the bottom
+      clearInterval(interval);
+
+      // Determine the landing slot
+      const landingSlotIndex = Math.floor(left / (100 / slots.length));
+      const slotMultiplier = slots[landingSlotIndex]?.innerText || "1x";
+
+      // Display result message
+      result.innerText = `🎯 The ball landed in slot ${slotMultiplier}!`;
+      result.style.color = landingSlotIndex % 2 === 0 ? "#ffc107" : "#e74c3c"; // Yellow for even slots, red for odd
+      return;
     }
 
-    function handleBallLanding() {
-        ball.classList.add("hidden");
-        ball.style.top = "0px";
+    // Simulate ball bouncing left or right randomly
+    top += 20;
+    left += Math.random() > 0.5 ? 5 : -5;
 
-        // Randomly pick a prize from the available slots
-        const prize = prizeSlots[Math.floor(Math.random() * prizeSlots.length)];
+    // Keep the ball within the board boundaries
+    if (left < 5) left = 5;
+    if (left > 95) left = 95;
 
-        if (prize > 0) {
-            users[currentUser].balance += prize;
-            localStorage.setItem("users", JSON.stringify(users));
-            resultMessage.textContent = `🎉 Congratulations! You won ${prize} ς! Your new balance is ${users[currentUser].balance} ς.`;
-        } else {
-            resultMessage.textContent = "😞 Better luck next time!";
-        }
-    }
+    // Update ball position
+    ball.style.top = `${top}px`;
+    ball.style.left = `${left}%`;
+  }, 100); // Move ball every 100ms
+}
 
-    dropButton.addEventListener("click", dropBall);
-});
+// Initialize the pyramid of pegs when the page loads
+window.onload = createPyramid;
