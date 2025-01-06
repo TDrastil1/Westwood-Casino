@@ -30,40 +30,86 @@
     }
 
     .plinko-board {
-      margin-top: 30px;
-      display: grid;
-      grid-template-columns: repeat(5, 80px);
-      gap: 15px;
-      justify-content: center;
-    }
-
-    .plinko-slot {
-      width: 80px;
-      height: 80px;
+      position: relative;
+      width: 400px;
+      height: 600px;
       background-color: #333;
-      border-radius: 50%;
+      border-radius: 15px;
+      margin-top: 30px;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      color: #ffcc00;
-      font-size: 1.2rem;
+      padding-top: 20px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
-    .play-button {
+    .pegs {
+      position: absolute;
+      display: grid;
+      grid-template-rows: repeat(10, 50px);
+      justify-content: center;
+      width: 100%;
+    }
+
+    .pegs div {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, 40px);
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .peg {
+      width: 20px;
+      height: 20px;
+      background-color: #fff;
+      border-radius: 50%;
+    }
+
+    .slots {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: flex-end;
+      padding: 10px 0;
+    }
+
+    .slot {
+      width: 50px;
+      height: 20px;
       background-color: #007bff;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+
+    .ball {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #ffc107;
+      border-radius: 50%;
+      display: none;
+    }
+
+    .play-button {
+      background-color: #28a745;
       color: #fff;
       font-size: 1.5rem;
       padding: 15px 30px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.3s;
-      margin-top: 30px;
+      margin-top: 20px;
+      transition: transform 0.2s ease, background-color 0.2s ease;
     }
 
     .play-button:hover {
-      background-color: #0056b3;
+      background-color: #218838;
       transform: scale(1.05);
     }
 
@@ -88,13 +134,31 @@
 <body>
   <div class="container">
     <h1>Plinko</h1>
-    <p>Drop the ball and see where it lands!</p>
+    <p>Drop the ball and watch it bounce to the bottom!</p>
     <div class="plinko-board">
-      <div class="plinko-slot" id="slot1">1</div>
-      <div class="plinko-slot" id="slot2">2</div>
-      <div class="plinko-slot" id="slot3">3</div>
-      <div class="plinko-slot" id="slot4">4</div>
-      <div class="plinko-slot" id="slot5">5</div>
+      <div class="pegs">
+        <!-- Create rows of pegs -->
+        ${Array(10)
+          .fill(0)
+          .map(
+            (_, rowIndex) =>
+              `<div>${Array(rowIndex + 1)
+                .fill(0)
+                .map(() => '<div class="peg"></div>')
+                .join('')}</div>`
+          )
+          .join('')}
+      </div>
+      <div class="slots">
+        <!-- Create landing slots -->
+        ${Array(9)
+          .fill(0)
+          .map(
+            (_, index) => `<div class="slot" id="slot${index + 1}">${index + 1}</div>`
+          )
+          .join('')}
+      </div>
+      <div class="ball" id="ball"></div>
     </div>
     <button class="play-button" onclick="dropBall()">Drop Ball</button>
     <p id="result" class="result-message"></p>
@@ -103,46 +167,38 @@
 
   <script>
     function dropBall() {
-      // Slots with weighted probabilities to tilt odds toward the house
-      const slots = [
-        { slot: 1, weight: 30 }, // Least payout
-        { slot: 2, weight: 25 }, // Moderate payout
-        { slot: 3, weight: 15 }, // Jackpot
-        { slot: 4, weight: 20 }, // Moderate payout
-        { slot: 5, weight: 10 }  // Least payout
-      ];
-
-      // Weighted random selection
-      function getRandomSlot() {
-        const totalWeight = slots.reduce((sum, slot) => sum + slot.weight, 0);
-        const randomWeight = Math.floor(Math.random() * totalWeight);
-
-        let cumulativeWeight = 0;
-        for (const slot of slots) {
-          cumulativeWeight += slot.weight;
-          if (randomWeight < cumulativeWeight) {
-            return slot.slot;
-          }
-        }
-      }
-
-      // Determine where the ball lands
-      const randomSlot = getRandomSlot();
-
-      // Get result message
+      const ball = document.getElementById('ball');
       const result = document.getElementById('result');
+      const slots = document.querySelectorAll('.slot');
 
-      // Update the result message based on the slot
-      if (randomSlot === 3) {
-        result.innerText = `🎯 The ball landed in slot ${randomSlot}! JACKPOT! You win 100 ς!`;
-        result.style.color = '#28a745'; // Green for jackpot
-      } else if (randomSlot === 2 || randomSlot === 4) {
-        result.innerText = `✨ The ball landed in slot ${randomSlot}! You win 50 ς!`;
-        result.style.color = '#ffc107'; // Yellow for smaller win
-      } else {
-        result.innerText = `😞 The ball landed in slot ${randomSlot}. House wins! Try again!`;
-        result.style.color = '#ff4444'; // Red for house win
-      }
+      ball.style.display = 'block';
+      ball.style.left = '50%';
+      ball.style.top = '0px';
+
+      let currentLeft = 50; // Start position
+      let top = 0; // Start top position
+
+      const interval = setInterval(() => {
+        if (top >= 520) {
+          // Stop the ball at the bottom
+          clearInterval(interval);
+
+          // Determine the landing slot
+          const landingSlot = Math.floor(currentLeft / (100 / slots.length)) + 1;
+          ball.style.left = `${landingSlot * (100 / slots.length)}%`;
+
+          // Display result
+          result.innerText = `🎯 The ball landed in slot ${landingSlot}!`;
+          result.style.color = landingSlot % 2 === 0 ? '#ffc107' : '#ff4444';
+          return;
+        }
+
+        // Update position for bounce effect
+        top += 20;
+        currentLeft += Math.random() > 0.5 ? 10 : -10;
+        ball.style.top = `${top}px`;
+        ball.style.left = `${currentLeft}%`;
+      }, 100);
     }
   </script>
 </body>
