@@ -103,13 +103,36 @@
 
   <script>
     function dropBall() {
-      // Randomly choose a slot between 1 and 5
-      const randomSlot = Math.floor(Math.random() * 5) + 1;
+      // Slots with weighted probabilities to tilt odds toward the house
+      const slots = [
+        { slot: 1, weight: 30 }, // Least payout
+        { slot: 2, weight: 25 }, // Moderate payout
+        { slot: 3, weight: 15 }, // Jackpot
+        { slot: 4, weight: 20 }, // Moderate payout
+        { slot: 5, weight: 10 }  // Least payout
+      ];
 
-      // Get the result element
+      // Weighted random selection
+      function getRandomSlot() {
+        const totalWeight = slots.reduce((sum, slot) => sum + slot.weight, 0);
+        const randomWeight = Math.floor(Math.random() * totalWeight);
+
+        let cumulativeWeight = 0;
+        for (const slot of slots) {
+          cumulativeWeight += slot.weight;
+          if (randomWeight < cumulativeWeight) {
+            return slot.slot;
+          }
+        }
+      }
+
+      // Determine where the ball lands
+      const randomSlot = getRandomSlot();
+
+      // Get result message
       const result = document.getElementById('result');
 
-      // Update result message
+      // Update the result message based on the slot
       if (randomSlot === 3) {
         result.innerText = `🎯 The ball landed in slot ${randomSlot}! JACKPOT! You win 100 ς!`;
         result.style.color = '#28a745'; // Green for jackpot
@@ -117,8 +140,8 @@
         result.innerText = `✨ The ball landed in slot ${randomSlot}! You win 50 ς!`;
         result.style.color = '#ffc107'; // Yellow for smaller win
       } else {
-        result.innerText = `😞 The ball landed in slot ${randomSlot}. Try again!`;
-        result.style.color = '#ff4444'; // Red for no win
+        result.innerText = `😞 The ball landed in slot ${randomSlot}. House wins! Try again!`;
+        result.style.color = '#ff4444'; // Red for house win
       }
     }
   </script>
