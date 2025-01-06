@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Westwood Casino - Scratch-Off</title>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <header>
+        <h1>Scratch-Off Game</h1>
+        <p>Scratch to reveal your prize!</p>
+    </header>
+    <main>
+        <section id="scratch-card">
+            <canvas id="scratchCanvas" width="300" height="200"></canvas>
+            <button id="reset-button" onclick="resetScratchCard()">Play Again</button>
+        </section>
+        <section id="results">
+            <p id="prize-message"></p>
+        </section>
+        <button onclick="navigateTo('dashboard.html')">Back to Dashboard</button>
+    </main>
+    <footer>
+        <p>Westwood Casino © 2025 | All rights reserved</p>
+    </footer>
+    <script src="js/scratchoff.js"></script>
+</body>
+</html>
