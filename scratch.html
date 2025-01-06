@@ -7,11 +7,11 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
       background-color: #1e1e2f;
       color: #fff;
       text-align: center;
+      margin: 0;
+      padding: 0;
     }
 
     .container {
@@ -27,167 +27,133 @@
       font-size: 3rem;
       color: #ffcc00;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-      margin-bottom: 20px;
-    }
-
-    .scratch-off-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
     }
 
     .scratch-card {
       position: relative;
       width: 300px;
       height: 200px;
-      background-color: #d3d3d3;
-      border-radius: 10px;
+      background-color: #444;
+      border-radius: 15px;
+      margin-bottom: 20px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
       overflow: hidden;
-    }
-
-    .card-content {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      background-color: #fff;
-      z-index: 1;
-      pointer-events: none;
     }
 
-    .card-content h2 {
-      color: #333;
+    .hidden-message {
       font-size: 1.5rem;
-      margin: 10px 0;
+      color: #28a745;
+      z-index: 2;
     }
 
-    .card-content p {
-      color: #555;
-      font-size: 1rem;
-      margin: 5px 0;
-    }
-
-    .scratch-layer {
+    canvas {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #a9a9a9;
-      z-index: 2;
-      cursor: pointer;
+      background-color: #bbb;
+      z-index: 3;
     }
 
     .coin {
       position: absolute;
-      bottom: -80px;
-      left: -80px;
       width: 50px;
       height: 50px;
-      background-color: gold;
+      background-color: #ffd700;
       border-radius: 50%;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #fff;
-      cursor: pointer;
-      transition: transform 0.3s;
+      pointer-events: none;
+      z-index: 4;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      left: 350px;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
-    .coin:hover {
-      transform: scale(1.2);
+    .back-link {
+      margin-top: 20px;
+      color: #ccc;
+      font-size: 1.2rem;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .back-link:hover {
+      color: #fff;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Scratch-Offs</h1>
-    <p>Click the coin to scratch and reveal your prize!</p>
-    <div class="scratch-off-container">
-      <div class="scratch-card" id="scratchCard">
-        <div class="card-content">
-          <h2>Westwood Casino</h2>
-          <p>Scratch to reveal your prize!</p>
-        </div>
-        <canvas class="scratch-layer" id="scratchLayer"></canvas>
-      </div>
-      <div class="coin" id="coin">💰</div>
+    <p>Use the coin to scratch the ticket and reveal your prize!</p>
+    <div class="scratch-card">
+      <div class="hidden-message" id="hiddenMessage">🎉 You Win 50 ς!</div>
+      <canvas id="scratchCanvas"></canvas>
     </div>
+    <div class="coin" id="coin">💰</div>
+    <a href="index.html" class="back-link">← Back to Home</a>
   </div>
 
   <script>
-    const canvas = document.getElementById('scratchLayer');
+    const canvas = document.getElementById('scratchCanvas');
     const ctx = canvas.getContext('2d');
     const coin = document.getElementById('coin');
+    const hiddenMessage = document.getElementById('hiddenMessage');
 
-    // Set canvas size to match the scratch card
+    // Set up canvas dimensions
     canvas.width = 300;
     canvas.height = 200;
 
-    // Draw the scratch layer
-    ctx.fillStyle = '#a9a9a9';
+    // Fill the canvas with the scratch-off layer
+    ctx.fillStyle = '#bbb';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Scratch animation variables
-    const totalArea = canvas.width * canvas.height;
-    let scratchedArea = 0;
+    // Randomize the prize
+    const outcomes = [
+      { message: "🎉 You Win 100 ς!", color: "#28a745", weight: 10 },
+      { message: "✨ You Win 50 ς!", color: "#ffc107", weight: 20 },
+      { message: "😞 Better Luck Next Time!", color: "#ff4444", weight: 70 },
+    ];
 
-    const animateCoin = () => {
-      const coinRadius = 20;
-      let x = 10; // Start position of the coin
-      let y = 10;
-      const stepX = 30; // Horizontal movement per step
-      const stepY = 30; // Vertical movement per row
+    function getOutcome() {
+      const totalWeight = outcomes.reduce((sum, outcome) => sum + outcome.weight, 0);
+      const randomWeight = Math.floor(Math.random() * totalWeight);
 
-      const scratch = () => {
-        // Scratch effect
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.beginPath();
-        ctx.arc(x, y, coinRadius, 0, Math.PI * 2, false);
-        ctx.fill();
-
-        // Calculate scratched area
-        scratchedArea += Math.PI * coinRadius * coinRadius;
-
-        // Move the coin to the next position
-        x += stepX;
-        if (x > canvas.width - coinRadius) {
-          x = 10; // Reset to the start of the row
-          y += stepY; // Move down one row
+      let cumulativeWeight = 0;
+      for (const outcome of outcomes) {
+        cumulativeWeight += outcome.weight;
+        if (randomWeight < cumulativeWeight) {
+          return outcome;
         }
+      }
+    }
 
-        // Stop animation if the coin goes out of bounds
-        if (y > canvas.height) {
-          if (scratchedArea / totalArea > 0.7) {
-            setTimeout(() => {
-              alert('🎉 Congratulations! You won a prize!');
-            }, 500);
-          }
-          return;
-        }
+    const selectedOutcome = getOutcome();
+    hiddenMessage.innerText = selectedOutcome.message;
+    hiddenMessage.style.color = selectedOutcome.color;
 
-        // Continue the animation
-        requestAnimationFrame(scratch);
-      };
+    // Scratch effect
+    canvas.addEventListener('mousemove', (e) => {
+      if (e.buttons !== 1) return; // Only scratch when the mouse is pressed
 
-      // Start the animation
-      scratch();
-    };
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
 
-    // Add event listener to the coin
-    coin.addEventListener('click', () => {
-      coin.style.pointerEvents = 'none'; // Disable coin interaction during animation
-      animateCoin();
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Coin follows the mouse
+    document.addEventListener('mousemove', (e) => {
+      coin.style.left = `${e.pageX - 25}px`;
+      coin.style.top = `${e.pageY - 25}px`;
     });
   </script>
 </body>
