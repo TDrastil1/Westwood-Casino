@@ -44,7 +44,6 @@
 
     .hidden-message {
       font-size: 1.5rem;
-      color: #28a745;
       z-index: 2;
       visibility: hidden;
     }
@@ -109,16 +108,31 @@
     const scratchOverlay = document.getElementById('scratchOverlay');
     const hiddenMessage = document.getElementById('hiddenMessage');
 
-    // Randomly determine if the user wins or loses
-    const isWinner = Math.random() > 0.5;
+    // House odds for winning
+    const outcomes = [
+      { message: "🎉 You Win 100 ς!", color: "#28a745", weight: 10 }, // Rare jackpot
+      { message: "✨ You Win 50 ς!", color: "#ffc107", weight: 20 }, // Moderate win
+      { message: "😞 Better Luck Next Time!", color: "#ff4444", weight: 70 } // House wins
+    ];
 
-    if (isWinner) {
-      hiddenMessage.innerText = "🎉 You Win 50 ς!";
-      hiddenMessage.style.color = "#28a745"; // Green for win
-    } else {
-      hiddenMessage.innerText = "😞 Better Luck Next Time!";
-      hiddenMessage.style.color = "#ff4444"; // Red for loss
+    // Randomize outcome with weighted probabilities
+    function getOutcome() {
+      const totalWeight = outcomes.reduce((sum, outcome) => sum + outcome.weight, 0);
+      const randomWeight = Math.floor(Math.random() * totalWeight);
+
+      let cumulativeWeight = 0;
+      for (const outcome of outcomes) {
+        cumulativeWeight += outcome.weight;
+        if (randomWeight < cumulativeWeight) {
+          return outcome;
+        }
+      }
     }
+
+    // Set the randomized outcome
+    const selectedOutcome = getOutcome();
+    hiddenMessage.innerText = selectedOutcome.message;
+    hiddenMessage.style.color = selectedOutcome.color;
 
     // Reveal the hidden message when the overlay is clicked
     scratchOverlay.addEventListener('click', () => {
