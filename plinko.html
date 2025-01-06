@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Westwood Casino - Plinko</title>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <header>
+        <h1>Plinko Game</h1>
+        <p>Drop the ball and see where it lands!</p>
+    </header>
+    <main>
+        <section id="plinko-board">
+            <div id="board-container">
+                <!-- Plinko board structure -->
+                <div id="pegs"></div>
+                <div id="ball" class="hidden"></div>
+            </div>
+            <button id="drop-button" onclick="dropBall()">Drop Ball</button>
+        </section>
+        <section id="results">
+            <p id="plinko-result"></p>
+        </section>
+        <button onclick="navigateTo('dashboard.html')">Back to Dashboard</button>
+    </main>
+    <footer>
+        <p>Westwood Casino © 2025 | All rights reserved</p>
+    </footer>
+    <script src="js/plinko.js"></script>
+</body>
+</html>
