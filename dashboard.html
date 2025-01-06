@@ -7,29 +7,30 @@
     <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-    <header>
-        <h1>Welcome to Your Dashboard</h1>
-        <p>Your gateway to the ultimate gaming experience!</p>
+    <header class="dashboard-header">
+        <h1>Welcome, <span id="username-display"></span>!</h1>
+        <p>Your ultimate gaming experience awaits. Let's make some winnings!</p>
     </header>
-    <main>
-        <section id="account-info">
-            <h2>Account Information</h2>
-            <p>Username: <span id="username-display"></span></p>
+    <main class="dashboard-main">
+        <section class="account-summary">
+            <h2>Account Summary</h2>
             <p>Balance: <span id="balance-display"></span> ς</p>
         </section>
-        <section id="games">
-            <h2>Games</h2>
-            <button onclick="navigateTo('slots.html')">Play Slots</button>
-            <button onclick="navigateTo('scratchoff.html')">Scratch-Off</button>
-            <button onclick="navigateTo('plinko.html')">Play Plinko</button>
+        <section class="games-section">
+            <h2>Available Games</h2>
+            <div class="games-list">
+                <button class="game-button" onclick="navigateTo('slots.html')">🎰 Play Slots</button>
+                <button class="game-button" onclick="navigateTo('scratchoff.html')">🎟 Scratch-Off</button>
+                <button class="game-button" onclick="navigateTo('plinko.html')">🔴 Play Plinko</button>
+            </div>
         </section>
-        <section id="actions">
+        <section class="account-actions">
             <h2>Account Actions</h2>
-            <button onclick="deposit()">Deposit Currency</button>
-            <button onclick="logout()">Logout</button>
+            <button class="action-button" onclick="deposit()">💰 Deposit Currency</button>
+            <button class="action-button" onclick="logout()">🚪 Logout</button>
         </section>
     </main>
-    <footer>
+    <footer class="dashboard-footer">
         <p>Westwood Casino © 2025 | All rights reserved</p>
     </footer>
     <script src="js/dashboard.js"></script>
