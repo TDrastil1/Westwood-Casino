@@ -1,63 +1,75 @@
-const canvas = document.getElementById('scratchLayer');
-const ctx = canvas.getContext('2d');
-const coin = document.getElementById('coin');
+function setupScratchCard() {
+  const canvas = document.getElementById('scratchCanvas');
+  const ctx = canvas.getContext('2d');
+  const hiddenMessage = document.getElementById('hiddenMessage');
+  const coin = document.getElementById('coin');
 
-// Set canvas size to match the scratch card
-canvas.width = 300;
-canvas.height = 200;
+  // Set up canvas dimensions
+  canvas.width = 300;
+  canvas.height = 200;
 
-// Draw the scratch layer
-ctx.fillStyle = '#a9a9a9';
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Fill the canvas with scratch-off layer
+  ctx.fillStyle = '#bbb';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-// Scratch animation variables
-const totalArea = canvas.width * canvas.height;
-let scratchedArea = 0;
+  // Randomize the prize
+  const outcomes = [
+    { message: "🎉 You Win 100 ς!", color: "#28a745", weight: 10 },
+    { message: "✨ You Win 50 ς!", color: "#ffc107", weight: 20 },
+    { message: "😞 Better Luck Next Time!", color: "#ff4444", weight: 70 },
+  ];
 
-const animateCoin = () => {
-  const coinRadius = 20;
-  let x = 10; // Start position of the coin
-  let y = 10;
-  const stepX = 30; // Horizontal movement per step
-  const stepY = 30; // Vertical movement per row
+  function getOutcome() {
+    const totalWeight = outcomes.reduce((sum, outcome) => sum + outcome.weight, 0);
+    const randomWeight = Math.floor(Math.random() * totalWeight);
 
-  const scratch = () => {
-    // Scratch effect
+    let cumulativeWeight = 0;
+    for (const outcome of outcomes) {
+      cumulativeWeight += outcome.weight;
+      if (randomWeight < cumulativeWeight) {
+        return outcome;
+      }
+    }
+  }
+
+  const selectedOutcome = getOutcome();
+  hiddenMessage.innerText = selectedOutcome.message;
+  hiddenMessage.style.color = selectedOutcome.color;
+
+  // Scratch effect
+  let scratchedArea = 0;
+  const totalArea = canvas.width * canvas.height;
+
+  canvas.addEventListener('mousemove', (e) => {
+    if (e.buttons !== 1) return; // Only scratch when the mouse is pressed
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
-    ctx.arc(x, y, coinRadius, 0, Math.PI * 2, false);
+    ctx.arc(x, y, 20, 0, Math.PI * 2);
     ctx.fill();
 
     // Calculate scratched area
-    scratchedArea += Math.PI * coinRadius * coinRadius;
+    scratchedArea += Math.PI * 20 * 20;
 
-    // Move the coin to the next position
-    x += stepX;
-    if (x > canvas.width - coinRadius) {
-      x = 10; // Reset to the start of the row
-      y += stepY; // Move down one row
+    // Check if enough area has been scratched
+    if ((scratchedArea / totalArea) > 0.7) {
+      canvas.removeEventListener('mousemove', arguments.callee); // Stop scratching
+      setTimeout(() => {
+        alert(hiddenMessage.innerText);
+      }, 300);
     }
+  });
 
-    // Stop animation if the coin goes out of bounds
-    if (y > canvas.height) {
-      if (scratchedArea / totalArea > 0.7) {
-        setTimeout(() => {
-          alert('🎉 Congratulations! You won a prize!');
-        }, 500);
-      }
-      return;
-    }
+  // Coin follows the mouse
+  document.addEventListener('mousemove', (e) => {
+    coin.style.left = `${e.pageX - 25}px`;
+    coin.style.top = `${e.pageY - 25}px`;
+  });
+}
 
-    // Continue the animation
-    requestAnimationFrame(scratch);
-  };
-
-  // Start the animation
-  scratch();
-};
-
-// Add event listener to the coin
-coin.addEventListener('click', () => {
-  coin.style.pointerEvents = 'none'; // Disable coin interaction during animation
-  animateCoin();
-});
+// Initialize the scratch card when the page loads
+document.addEventListener('DOMContentLoaded', setupScratchCard);
