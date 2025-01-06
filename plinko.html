@@ -9,32 +9,81 @@
       font-family: Arial, sans-serif;
       background-color: #1e1e2f;
       color: #fff;
-      text-align: center;
       margin: 0;
       padding: 0;
+      display: flex;
     }
 
-    .container {
+    .sidebar {
+      width: 25%;
+      background-color: #2a2f3a;
+      height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+      color: #ccc;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      justify-content: space-between;
     }
 
-    h1 {
-      font-size: 3rem;
-      color: #ffcc00;
-      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    .sidebar h2 {
+      color: #fff;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    .bet-options {
+      margin-bottom: 20px;
+    }
+
+    .bet-options label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    .bet-options input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .play-button {
+      background-color: #28a745;
+      color: #fff;
+      font-size: 1.2rem;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+      margin-top: 20px;
+    }
+
+    .play-button:hover {
+      background-color: #218838;
+      transform: scale(1.05);
+    }
+
+    .board-container {
+      width: 75%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background-color: #1b1f2b;
     }
 
     .plinko-board {
       position: relative;
       width: 600px;
-      height: 700px;
+      height: 800px;
       background-color: #333;
       border-radius: 15px;
-      margin-top: 30px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
       display: flex;
       flex-direction: column;
@@ -45,12 +94,11 @@
 
     .pegs {
       position: absolute;
-      top: 50px;
+      top: 20px;
       width: 100%;
-      height: 85%;
+      height: 90%;
       display: grid;
       justify-content: center;
-      align-items: start;
     }
 
     .row {
@@ -61,8 +109,8 @@
     }
 
     .peg {
-      width: 15px;
-      height: 15px;
+      width: 10px;
+      height: 10px;
       background-color: #fff;
       border-radius: 50%;
     }
@@ -77,7 +125,7 @@
     }
 
     .slot {
-      width: 60px;
+      width: 50px;
       height: 50px;
       background-color: #007bff;
       border-radius: 5px;
@@ -85,7 +133,7 @@
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: bold;
     }
 
@@ -107,23 +155,6 @@
       display: none;
     }
 
-    .play-button {
-      background-color: #28a745;
-      color: #fff;
-      font-size: 1.5rem;
-      padding: 15px 30px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.2s ease, background-color 0.2s ease;
-      margin-top: 20px;
-    }
-
-    .play-button:hover {
-      background-color: #218838;
-      transform: scale(1.05);
-    }
-
     .result-message {
       margin-top: 20px;
       font-size: 1.5rem;
@@ -131,9 +162,16 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Plinko</h1>
-    <p>Press "Drop Ball" to play!</p>
+  <div class="sidebar">
+    <h2>Betting Options</h2>
+    <div class="bet-options">
+      <label for="bet-amount">Bet Amount:</label>
+      <input type="number" id="bet-amount" placeholder="Enter your bet" />
+    </div>
+    <button class="play-button" onclick="dropBall()">Drop Ball</button>
+    <p id="result" class="result-message"></p>
+  </div>
+  <div class="board-container">
     <div class="plinko-board">
       <div class="pegs" id="pegs"></div>
       <div class="slots" id="slots">
@@ -150,8 +188,6 @@
       </div>
       <div class="ball" id="ball"></div>
     </div>
-    <button class="play-button" onclick="dropBall()">Drop Ball</button>
-    <p id="result" class="result-message"></p>
   </div>
 
   <script>
@@ -180,10 +216,10 @@
 
       // Initialize ball position
       ball.style.display = "block";
-      ball.style.top = "50px";
+      ball.style.top = "20px";
       ball.style.left = "50%";
 
-      let top = 50; // Starting vertical position
+      let top = 20; // Starting vertical position
       let left = 50; // Centered horizontally
 
       const interval = setInterval(() => {
