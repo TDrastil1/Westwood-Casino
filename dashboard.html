@@ -1,54 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Westwood Casino - Dashboard</title>
-    <link rel="stylesheet" href="css/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Westwood Casino</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #2c2f4e;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      color: #ffcc00;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+      margin: 0;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      color: #ccc;
+      margin: 10px 0 0;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .hero h2 {
+      font-size: 2rem;
+      color: #fff;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #ccc;
+      margin: 10px 0 30px;
+    }
+
+    .games-section {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      padding: 20px;
+    }
+
+    .game-card {
+      width: 300px;
+      background-color: #333;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
+    }
+
+    .game-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .game-card h3 {
+      font-size: 1.5rem;
+      color: #ffcc00;
+      margin: 10px 0;
+    }
+
+    .game-card p {
+      color: #ccc;
+      font-size: 1rem;
+      padding: 0 15px;
+    }
+
+    .game-card button {
+      margin: 15px;
+      padding: 10px 20px;
+      font-size: 1.1rem;
+      color: #fff;
+      background-color: #ff5722;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .game-card button:hover {
+      background-color: #e64a19;
+      transform: scale(1.05);
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #2c2f4e;
+      color: #ccc;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-    <header class="dashboard-header">
-        <h1>Welcome to Westwood Casino!</h1>
-        <p>Select your favorite game and enter the amount you want to spend.</p>
-    </header>
-    <main class="dashboard-main">
-        <section class="games-section">
-            <h2>Select Your Game</h2>
-            <div class="games-list">
-                <button class="game-button" onclick="playGame('Scratch-Off')">🎟 Scratch-Off</button>
-                <button class="game-button" onclick="playGame('Slots')">🎰 Slots</button>
-                <button class="game-button" onclick="playGame('Plinko')">🔴 Plinko</button>
-            </div>
-        </section>
-        <!-- Hidden form to send game details via FormSpree -->
-        <form id="email-form" action="https://formspree.io/f/mvggvwgy" method="POST" style="display:none;">
-            <input type="hidden" name="game_name" id="game-name">
-            <input type="hidden" name="amount" id="amount">
-            <input type="hidden" name="_subject" value="Westwood Casino Game Request">
-        </form>
-    </main>
-    <footer class="dashboard-footer">
-        <p>Westwood Casino © 2025 | All rights reserved</p>
-    </footer>
-    <script>
-        function playGame(gameName) {
-            const amount = prompt(`Enter the amount you want to spend on ${gameName} (ς):`);
+  <header>
+    <h1>Welcome to Westwood Casino</h1>
+    <p>Play responsibly and enjoy with school currency (ς)!</p>
+  </header>
 
-            if (!amount || isNaN(amount) || amount <= 0) {
-                alert("Please enter a valid amount.");
-                return;
-            }
+  <div class="hero">
+    <h2>Choose Your Game</h2>
+    <p>Click on a game below to start playing and test your luck!</p>
+  </div>
 
-            // Populate hidden form fields with the game name and amount
-            document.getElementById("game-name").value = gameName;
-            document.getElementById("amount").value = amount;
+  <div class="games-section">
+    <!-- Slots Game Card -->
+    <div class="game-card">
+      <img src="slots.jpg" alt="Slots Game">
+      <h3>Slots</h3>
+      <p>Spin the reels and win big! Test your luck and hit the jackpot.</p>
+      <button onclick="window.location.href='slots.html'">Play Slots</button>
+    </div>
 
-            // Submit the form to FormSpree
-            const form = document.getElementById("email-form");
-            form.submit();
+    <!-- Plinko Game Card -->
+    <div class="game-card">
+      <img src="plinko.png" alt="Plinko Game">
+      <h3>Plinko</h3>
+      <p>Drop the ball and see where it lands. Can you hit the jackpot?</p>
+      <button onclick="window.location.href='plinko.html'">Play Plinko</button>
+    </div>
 
-            alert(`Your request to play ${gameName} with ${amount} ς has been sent successfully!`);
-        }
-    </script>
+    <!-- Scratch-Offs Game Card -->
+    <div class="game-card">
+      <img src="scratch.png" alt="Scratch-Offs Game">
+      <h3>Scratch-Offs</h3>
+      <p>Scratch the ticket and reveal your prize. Every card is a chance to win!</p>
+      <button onclick="window.location.href='scratch.html'">Play Scratch-Offs</button>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Westwood Casino | School currency only | All rights reserved
+  </footer>
 </body>
 </html>
