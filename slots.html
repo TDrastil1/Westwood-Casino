@@ -32,8 +32,8 @@
     .slots-machine {
       position: relative;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       margin-bottom: 20px;
     }
 
@@ -54,7 +54,7 @@
 
     .reel .symbols {
       position: absolute;
-      animation: spin infinite 0.5s linear;
+      animation: spin infinite 0.3s linear;
     }
 
     @keyframes spin {
@@ -85,7 +85,7 @@
       position: absolute;
       top: 10px;
       left: 0;
-      transition: top 0.2s ease-in-out;
+      transition: top 0.3s ease-in-out;
     }
 
     .lever:active .lever-ball {
@@ -151,11 +151,11 @@
       result.innerText = '';
       result.style.color = '';
 
-      // Spin each reel with a delay
+      // Spin each reel with animation
       reels.forEach((reel, index) => {
         const reelSymbols = reel.querySelector('.symbols');
-        reelSymbols.style.animation = 'spin infinite 0.5s linear';
-        
+        reelSymbols.style.animation = 'spin infinite 0.3s linear';
+
         setTimeout(() => {
           // Stop spinning after a delay
           reelSymbols.style.animation = 'none';
