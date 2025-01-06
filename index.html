@@ -1,28 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Westwood Casino - Login</title>
-    <link rel="stylesheet" href="css/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Westwood Casino</title>
+  <link rel="stylesheet" href="index.css">
+  <style>
+    /* Inline CSS for simplicity */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .game-options {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .game-options button {
+      background-color: #ff6f61;
+      color: #fff;
+      font-size: 1.5rem;
+      padding: 20px 40px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s, background-color 0.3s;
+    }
+
+    .game-options button:hover {
+      transform: scale(1.1);
+      background-color: #e85c50;
+    }
+
+    .game-options img {
+      width: 100px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Westwood Casino</h1>
-        <p>Welcome to the ultimate school currency gaming experience!</p>
-    </header>
-    <main>
-        <section id="login-section">
-            <h2>Login</h2>
-            <input type="text" id="username" placeholder="Enter your username">
-            <input type="password" id="password" placeholder="Enter your password">
-            <button onclick="login()">Login</button>
-            <p>Don't have an account? <a href="#" onclick="signupPrompt()">Sign up</a></p>
-        </section>
-    </main>
-    <footer>
-        <p>Westwood Casino © 2025 | All rights reserved</p>
-    </footer>
-    <script src="js/main.js"></script>
+  <div class="container">
+    <h1>Welcome to Westwood Casino</h1>
+    <p>Choose your game and start playing with school currency (ς)!</p>
+    <div class="game-options">
+      <!-- Slots Button -->
+      <button onclick="navigateTo('slots')">
+        <img src="slots.jpg" alt="Slots">
+        Slots
+      </button>
+
+      <!-- Plinko Button -->
+      <button onclick="navigateTo('plinko')">
+        <img src="plinko.png" alt="Plinko">
+        Plinko
+      </button>
+
+      <!-- Scratch-Offs Button -->
+      <button onclick="navigateTo('scratch')">
+        <img src="scratch.png" alt="Scratch-Offs">
+        Scratch-Offs
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Westwood Casino | School currency only | All rights reserved
+  </footer>
+
+  <script>
+    function navigateTo(game) {
+      if (game === 'slots') {
+        window.location.href = 'slots.html';
+      } else if (game === 'plinko') {
+        window.location.href = 'plinko.html';
+      } else if (game === 'scratch') {
+        window.location.href = 'scratch.html';
+      }
+    }
+  </script>
 </body>
 </html>
