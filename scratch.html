@@ -31,10 +31,10 @@
     }
 
     .scratch-off-container {
-      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
 
     .scratch-card {
@@ -86,25 +86,33 @@
     }
 
     .coin {
+      position: absolute;
+      bottom: -80px;
+      left: -80px;
       width: 50px;
       height: 50px;
       background-color: gold;
       border-radius: 50%;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      margin-left: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.5rem;
       font-weight: bold;
       color: #fff;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .coin:hover {
+      transform: scale(1.2);
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Scratch-Offs</h1>
-    <p>Click on the card to scratch and reveal your prize!</p>
+    <p>Click the coin to scratch and reveal your prize!</p>
     <div class="scratch-off-container">
       <div class="scratch-card" id="scratchCard">
         <div class="card-content">
@@ -113,12 +121,14 @@
         </div>
         <canvas class="scratch-layer" id="scratchLayer"></canvas>
       </div>
+      <div class="coin" id="coin">💰</div>
     </div>
   </div>
 
   <script>
     const canvas = document.getElementById('scratchLayer');
     const ctx = canvas.getContext('2d');
+    const coin = document.getElementById('coin');
 
     // Set canvas size to match the scratch card
     canvas.width = 300;
@@ -128,64 +138,51 @@
     ctx.fillStyle = '#a9a9a9';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Scratch animation variables
-    let isScratching = false;
-    let scratchInterval;
+    // Scratch animation
+    const animateCoin = () => {
+      const cardRect = canvas.getBoundingClientRect();
+      const startX = cardRect.left;
+      const startY = cardRect.top;
+      const width = cardRect.width;
+      const height = cardRect.height;
 
-    function scratchEffect() {
-      const radius = 20;
+      const coinRect = coin.getBoundingClientRect();
+      let x = coinRect.left - startX;
+      let y = coinRect.top - startY;
 
-      scratchInterval = setInterval(() => {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
-
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, Math.PI * 2, false);
-        ctx.fill();
-      }, 50); // Scratch every 50ms
-    }
-
-    // Add event listeners for the scratch card
-    canvas.addEventListener('mousedown', () => {
-      isScratching = true;
-      scratchEffect();
-    });
-
-    canvas.addEventListener('mouseup', () => {
-      isScratching = false;
-      clearInterval(scratchInterval);
-
-      // Check if most of the scratch area is removed
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const pixels = imageData.data;
-      let scratched = 0;
-
-      for (let i = 3; i < pixels.length; i += 4) {
-        if (pixels[i] === 0) {
-          scratched++;
-        }
-      }
-
-      const scratchedPercentage = (scratched / (pixels.length / 4)) * 100;
-      if (scratchedPercentage > 70) {
-        // Reveal the prize if more than 70% is scratched
-        canvas.style.pointerEvents = 'none';
-        alert('🎉 Congratulations! You won a prize!');
-      }
-    });
-
-    canvas.addEventListener('mousemove', (e) => {
-      if (isScratching) {
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
+      let direction = 1; // 1 for right, -1 for left
+      const speed = 10;
+      const scratchInterval = setInterval(() => {
+        // Scratch effect
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
         ctx.arc(x, y, 20, 0, Math.PI * 2, false);
         ctx.fill();
-      }
+
+        // Move coin
+        if (direction === 1) x += speed;
+        else x -= speed;
+
+        if (x > width - 20 || x < 20) {
+          // Change direction when hitting edge
+          direction *= -1;
+          y += 30; // Move down to simulate a new scratch row
+        }
+
+        // Stop animation when most of the layer is scratched
+        if (y > height) {
+          clearInterval(scratchInterval);
+          setTimeout(() => {
+            alert('🎉 Congratulations! You won a prize!');
+          }, 500);
+        }
+      }, 50);
+    };
+
+    // Add event listener to the coin
+    coin.addEventListener('click', () => {
+      coin.style.pointerEvents = 'none'; // Disable coin interaction during animation
+      animateCoin();
     });
   </script>
 </body>
