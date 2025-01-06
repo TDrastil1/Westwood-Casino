@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Westwood Casino - Slots</title>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <header>
+        <h1>Slots Game</h1>
+        <p>Spin the reels and test your luck!</p>
+    </header>
+    <main>
+        <section id="slots-machine">
+            <div id="reel-container">
+                <div class="reel" id="reel1">🍒</div>
+                <div class="reel" id="reel2">🍋</div>
+                <div class="reel" id="reel3">🍉</div>
+            </div>
+            <button id="spin-button" onclick="spin()">Spin</button>
+        </section>
+        <section id="results">
+            <p id="message"></p>
+        </section>
+        <button onclick="navigateTo('dashboard.html')">Back to Dashboard</button>
+    </main>
+    <footer>
+        <p>Westwood Casino © 2025 | All rights reserved</p>
+    </footer>
+    <script src="js/slots.js"></script>
+</body>
+</html>
