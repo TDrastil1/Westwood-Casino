@@ -1,92 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slot Machine</title>
+  <style>
+    /* General Styling */
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(45deg, #333, #111);
+      color: white;
+    }
 
-/**
- * Setup
- */
-const debugEl = document.getElementById('debug'),
-			// Mapping of indexes to icons: start from banana in middle of initial position and then upwards
-			iconMap = ["banana", "seven", "cherry", "plum", "orange", "bell", "bar", "lemon", "melon"],
-			// Width of the icons
-			icon_width = 79,	
-			// Height of one icon in the strip
-			icon_height = 79,	
-			// Number of icons in the strip
-			num_icons = 9,	
-			// Max-speed in ms for animating one icon down
-			time_per_icon = 100,
-			// Holds icon indexes
-			indexes = [0, 0, 0];
+    .slots-container {
+      position: relative;
+      width: calc(3.5 * 79px + 50px); /* Adjusted width for lever */
+      display: flex;
+      align-items: center;
+    }
 
+    .slots {
+      display: flex;
+      justify-content: space-between;
+      width: calc(3.5 * 79px);
+      height: calc(3 * 79px);
+      padding: calc(0.3 * 79px);
+      background: linear-gradient(45deg, grey 0%, lightgray 100%);
+      border: 2px solid rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.5);
+    }
 
-/** 
- * Roll one reel
- */
-const roll = (reel, offset = 0) => {
-	// Minimum of 2 + the reel offset rounds
-	const delta = (offset + 2) * num_icons + Math.round(Math.random() * num_icons); 
-	
-	// Return promise so we can wait for all reels to finish
-	return new Promise((resolve, reject) => {
-		
-		const style = getComputedStyle(reel),
-					// Current background position
-					backgroundPositionY = parseFloat(style["background-position-y"]),
-					// Target background position
-					targetBackgroundPositionY = backgroundPositionY + delta * icon_height,
-					// Normalized background position, for reset
-					normTargetBackgroundPositionY = targetBackgroundPositionY%(num_icons * icon_height);
-		
-		// Delay animation with timeout, for some reason a delay in the animation property causes stutter
-		setTimeout(() => { 
-			// Set transition properties ==> https://cubic-bezier.com/#.41,-0.01,.63,1.09
-			reel.style.transition = `background-position-y ${(8 + 1 * delta) * time_per_icon}ms cubic-bezier(.41,-0.01,.63,1.09)`;
-			// Set background position
-			reel.style.backgroundPositionY = `${backgroundPositionY + delta * icon_height}px`;
-		}, offset * 150);
-			
-		// After animation
-		setTimeout(() => {
-			// Reset position, so that it doesn't get higher without limit
-			reel.style.transition = `none`;
-			reel.style.backgroundPositionY = `${normTargetBackgroundPositionY}px`;
-			// Resolve this promise
-			resolve(delta%num_icons);
-		}, (8 + 1 * delta) * time_per_icon + offset * 150);
-		
-	});
-};
+    .reel {
+      position: relative;
+      width: 79px;
+      height: calc(3 * 79px);
+      background-image: url(https://assets.codepen.io/439000/slotreel.webp);
+      background-size: 100%;
+      background-repeat: repeat-y;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+    }
 
+    /* Lever Styling */
+    .lever-container {
+      position: relative;
+      margin-left: 20px;
+      width: 50px;
+      height: 200px;
+      background: linear-gradient(to bottom, #8b0000, #550000);
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+      cursor: pointer;
+    }
 
-/**
- * Roll all reels, when promise resolves roll again
- */
-function rollAll() {
-	
-	debugEl.textContent = 'rolling...';
-	
-	const reelsList = document.querySelectorAll('.slots > .reel');
-	
-	Promise
-		
-		// Activate each reel, must convert NodeList to Array for this with spread operator
-		.all( [...reelsList].map((reel, i) => roll(reel, i)) )	
-		
-		// When all reels done animating (all promises solve)
-		.then((deltas) => {
-			// add up indexes
-			deltas.forEach((delta, i) => indexes[i] = (indexes[i] + delta)%num_icons);
-			debugEl.textContent = indexes.map((i) => iconMap[i]).join(' - ');
-		
-			// Win conditions
-			if (indexes[0] == indexes[1] || indexes[1] == indexes[2]) {
-				const winCls = indexes[0] == indexes[2] ? "win2" : "win1";
-				document.querySelector(".slots").classList.add(winCls);
-				setTimeout(() => document.querySelector(".slots").classList.remove(winCls), 2000)
-			}
-		
-			// Again!
-			setTimeout(rollAll, 3000);
-		});
-};
+    .lever-stick {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 120px;
+      background: #444;
+      border-radius: 5px;
+    }
 
-// Kickoff
-setTimeout(rollAll, 1000);
+    .lever-ball {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle, #ff0000, #aa0000);
+      border-radius: 50%;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Spin Result */
+    .result {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: #ffcc00;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    }
+  </style>
+</head>
+<body>
+  <div class="slots-container">
+    <div class="slots" id="slots">
+      <div class="reel" id="reel1"></div>
+      <div class="reel" id="reel2"></div>
+      <div class="reel" id="reel3"></div>
+    </div>
+    <div class="lever-container" id="lever">
+      <div class="lever-stick"></div>
+      <div class="lever-ball"></div>
+    </div>
+  </div>
+  <p class="result" id="resultMessage">Pull the lever to spin!</p>
+
+  <script>
+    const lever = document.getElementById("lever");
+    const reels = [
+      document.getElementById("reel1"),
+      document.getElementById("reel2"),
+      document.getElementById("reel3"),
+    ];
+    const resultMessage = document.getElementById("resultMessage");
+
+    // Function to simulate spinning reels
+    function spinReels() {
+      resultMessage.textContent = "Spinning...";
+      reels.forEach((reel, index) => {
+        const randomPosition = Math.floor(Math.random() * 10) * -79; // Random stop position
+        reel.style.backgroundPositionY = `${randomPosition}px`;
+      });
+
+      setTimeout(() => {
+        resultMessage.textContent = "Check the results!";
+      }, 1000);
+    }
+
+    // Lever interaction
+    lever.addEventListener("click", () => {
+      spinReels();
+    });
+  </script>
+</body>
+</html>
