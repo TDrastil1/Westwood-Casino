@@ -54,9 +54,26 @@
       display: none;
     }
 
-    .dark-text {
-      color: #bbb;
-      margin-bottom: 10px;
+    .coin-button {
+      width: 100px;
+      height: 100px;
+      background-color: #ffd700;
+      border-radius: 50%;
+      border: 2px solid #e0a800;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s ease;
+    }
+
+    .coin-button:hover {
+      transform: scale(1.1);
+    }
+
+    .coin-button:active {
+      transform: scale(1.05);
     }
   </style>
 </head>
@@ -64,8 +81,67 @@
   <div class="container">
     <h1>Scratch-Off Game</h1>
     <canvas id="scratch" width="400" height="300"></canvas>
+    <button class="coin-button" id="coinButton">Scratch</button>
     <p id="resultMessage"></p>
   </div>
-  <script src="script.js"></script>
+  <script>
+    // Elements
+    const canvas = document.getElementById("scratch");
+    const context = canvas.getContext("2d");
+    const resultMessage = document.getElementById("resultMessage");
+    const coinButton = document.getElementById("coinButton");
+
+    // Initialize the scratch area
+    const init = () => {
+      // Set dark-themed scratch area background
+      const gradientColor = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradientColor.addColorStop(0, "#333");
+      gradientColor.addColorStop(1, "#444");
+      context.fillStyle = gradientColor;
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Randomize the outcome
+      randomizeOutcome();
+    };
+
+    // Randomize the outcome for the scratch card
+    const randomizeOutcome = () => {
+      const outcome = Math.random() < 0.05 ? "🎉 You Win $100!" : "😞 Try Again Next Time.";
+      resultMessage.textContent = outcome;
+      resultMessage.style.display = "none"; // Hide until fully scratched
+    };
+
+    // Simulate scratching the canvas
+    const scratchOff = () => {
+      context.globalCompositeOperation = "destination-out";
+
+      let x = 0;
+      let y = 0;
+      const step = 10;
+
+      const interval = setInterval(() => {
+        context.beginPath();
+        context.arc(x, y, 20, 0, 2 * Math.PI);
+        context.fill();
+
+        x += step;
+        if (x > canvas.width) {
+          x = 0;
+          y += step;
+        }
+
+        if (y > canvas.height) {
+          clearInterval(interval);
+          resultMessage.style.display = "block"; // Reveal the outcome
+        }
+      }, 10);
+    };
+
+    // Add event listener to the coin button
+    coinButton.addEventListener("click", scratchOff);
+
+    // Initialize the scratch card on window load
+    window.onload = init;
+  </script>
 </body>
 </html>
