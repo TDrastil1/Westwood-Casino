@@ -18,45 +18,53 @@
       font-size: 3rem;
       color: #ffcc00;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+      margin: 20px 0;
+    }
+
+    .instructions {
+      font-size: 1.2rem;
+      color: #ccc;
+      margin: 10px 0 20px 0;
     }
 
     .scratch-card {
       position: relative;
-      width: 350px;
+      width: 400px;
       margin: 20px auto;
       padding: 15px;
-      background-color: #4caf50;
+      background: linear-gradient(to bottom, #4caf50, #3b7f41);
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
-    .instructions {
-      font-size: 1rem;
-      color: #ccc;
-      margin: 10px 0;
+    .section-title {
+      color: #fff;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
     }
 
-    .bonus-section, .numbers-section {
+    .numbers-section {
       display: flex;
       justify-content: space-around;
       flex-wrap: wrap;
-      margin-bottom: 15px;
+      margin: 10px 0;
     }
 
-    .bonus, .prize-box {
+    .prize-box {
       position: relative;
-      width: 80px;
-      height: 80px;
-      background-color: #444;
+      width: 90px;
+      height: 90px;
+      background: #444;
       border-radius: 10px;
       color: white;
-      font-size: 1rem;
-      font-weight: bold;
       text-align: center;
-      line-height: 80px;
+      line-height: 90px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
       overflow: hidden;
-      margin: 5px;
+      margin: 10px;
+      border: 3px solid #d4af37;
     }
 
     .hidden-value {
@@ -92,12 +100,6 @@
       display: none;
     }
 
-    .section-title {
-      color: #fff;
-      margin: 10px 0;
-      font-size: 1.5rem;
-    }
-
     .back-link {
       margin-top: 20px;
       color: #ccc;
@@ -113,9 +115,8 @@
 </head>
 <body>
   <h1>Scratch-Offs</h1>
-  <p class="instructions">Use the coin to scratch off the areas and reveal your prize. Match any numbers to the winning numbers to win the corresponding amount!</p>
+  <p class="instructions">Use the coin to scratch off the areas and reveal your prizes. Match any numbers with the winning numbers to win!</p>
   <div class="scratch-card">
-    <!-- Winning Numbers Section -->
     <h3 class="section-title">Winning Numbers</h3>
     <div class="numbers-section">
       <div class="prize-box">
@@ -132,7 +133,6 @@
       </div>
     </div>
 
-    <!-- Your Numbers Section -->
     <h3 class="section-title">Your Numbers</h3>
     <div class="numbers-section">
       <div class="prize-box">
@@ -155,6 +155,79 @@
   </div>
   <div class="coin" id="coin">💰</div>
   <a href="index.html" class="back-link">← Back to Home</a>
-  <script src="script.js"></script>
+  <script>
+    // Prize outcomes
+    const prizeOutcomes = [
+      { prize: "🎉 $100,000", color: "#28a745", weight: 1 },
+      { prize: "✨ $10,000", color: "#ffc107", weight: 5 },
+      { prize: "💰 $1,000", color: "#007bff", weight: 20 },
+      { prize: "😞 Try Again", color: "#ff4444", weight: 74 },
+    ];
+
+    // Random prize generator
+    function getRandomPrize() {
+      const totalWeight = prizeOutcomes.reduce((sum, outcome) => sum + outcome.weight, 0);
+      const randomWeight = Math.floor(Math.random() * totalWeight);
+
+      let cumulativeWeight = 0;
+      for (const outcome of prizeOutcomes) {
+        cumulativeWeight += outcome.weight;
+        if (randomWeight < cumulativeWeight) {
+          return outcome;
+        }
+      }
+    }
+
+    function initializeScratchCard() {
+      const overlays = document.querySelectorAll(".scratch-overlay");
+      const coin = document.getElementById("coin");
+
+      overlays.forEach((canvas) => {
+        const ctx = canvas.getContext("2d");
+        const hiddenValue = canvas.previousElementSibling;
+
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+
+        ctx.fillStyle = "#bbb";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const randomPrize = getRandomPrize();
+        hiddenValue.textContent = randomPrize.prize;
+        hiddenValue.style.color = randomPrize.color;
+
+        let scratchedArea = 0;
+        const totalArea = canvas.width * canvas.height;
+
+        canvas.addEventListener("mousemove", (e) => {
+          if (e.buttons !== 1) return;
+
+          const rect = canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          ctx.globalCompositeOperation = "destination-out";
+          ctx.beginPath();
+          ctx.arc(x, y, 20, 0, Math.PI * 2);
+          ctx.fill();
+
+          scratchedArea += Math.PI * 20 * 20;
+
+          if ((scratchedArea / totalArea) > 0.7) {
+            canvas.style.pointerEvents = "none";
+            hiddenValue.style.display = "block";
+          }
+        });
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        coin.style.display = "block";
+        coin.style.left = `${e.pageX - 20}px`;
+        coin.style.top = `${e.pageY - 20}px`;
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", initializeScratchCard);
+  </script>
 </body>
 </html>
