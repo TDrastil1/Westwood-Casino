@@ -5,173 +5,141 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Slot Machine</title>
   <style>
+    /* General Styling */
     body {
       font-family: Arial, sans-serif;
-      background: radial-gradient(circle, #1e1e2f, #000);
-      color: white;
       text-align: center;
+      background: radial-gradient(circle, #222, #000);
+      color: white;
       margin: 0;
       padding: 0;
     }
 
     h1 {
-      font-size: 3rem;
-      color: #ffcc00;
-      text-shadow: 2px 2px 5px black;
-      margin: 20px 0;
+      font-size: 2.5rem;
+      color: #ffd700;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+      margin-top: 20px;
     }
 
     .slot-machine {
-      position: relative;
-      width: 500px;
-      height: 400px;
       margin: 50px auto;
-      background: linear-gradient(to bottom, #333, #111);
-      border-radius: 20px;
+      width: 400px;
+      padding: 20px;
+      background: #333;
+      border-radius: 10px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     }
 
-    /* Reels Section */
-    .reels-container {
+    .reels {
       display: flex;
       justify-content: space-around;
-      align-items: center;
-      width: 80%;
-      height: 200px;
-      margin: 50px auto;
-      background: #000;
-      border-radius: 10px;
+      margin: 20px 0;
       overflow: hidden;
+      height: 100px;
+      background: #000;
+      border-radius: 5px;
     }
 
     .reel {
       width: 100px;
       height: 100%;
-      background: #fff;
-      overflow: hidden;
-      position: relative;
-      border-radius: 10px;
-    }
-
-    .symbol {
-      font-size: 3rem;
-      font-weight: bold;
-      color: #ff0000;
-      text-shadow: 2px 2px 5px black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100px;
-    }
-
-    /* Lever Section */
-    .lever-container {
-      position: absolute;
-      right: -80px;
-      top: 20%;
-      width: 100px;
-      height: 300px;
-      background: #8b0000;
-      border-radius: 10px;
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.8);
-    }
-
-    .lever-stick {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 15px;
-      height: 150px;
       background: #444;
-      border-radius: 10px;
+      text-align: center;
+      line-height: 100px;
+      font-size: 2rem;
+      color: white;
+      border: 1px solid #222;
     }
 
-    .lever-ball {
-      position: absolute;
-      top: 180px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40px;
-      height: 40px;
-      background: radial-gradient(circle, #ff0000, #aa0000);
-      border-radius: 50%;
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+    button {
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      background: #ffd700;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
+      color: #333;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
     }
 
-    /* Spin Result */
-    .result {
+    button:hover {
+      background: #ffcc00;
+    }
+
+    #resultMessage {
       margin-top: 20px;
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       color: #ffcc00;
-      text-shadow: 1px 1px 3px black;
     }
   </style>
 </head>
 <body>
-  <h1>Slot Machine</h1>
   <div class="slot-machine">
-    <div class="reels-container">
-      <div class="reel" id="reel1"></div>
-      <div class="reel" id="reel2"></div>
-      <div class="reel" id="reel3"></div>
+    <h1>Slot Machine</h1>
+    <div class="reels">
+      <div class="reel" id="reel1">🍒</div>
+      <div class="reel" id="reel2">🍋</div>
+      <div class="reel" id="reel3">💎</div>
     </div>
-    <div class="lever-container">
-      <div class="lever-stick"></div>
-      <div class="lever-ball" id="lever"></div>
-    </div>
+    <button id="spinButton">Spin</button>
+    <p id="resultMessage">Press Spin to play!</p>
   </div>
-  <p class="result" id="resultMessage">Pull the lever to spin!</p>
-
   <script>
-    const symbols = ["🍒", "🍋", "🔔", "💎"];
+    // Slot Machine JavaScript
+
+    const symbols = ["🍒", "🍋", "🔔", "💎", "⭐", "🍉"]; // Possible symbols
+    const spinButton = document.getElementById("spinButton");
+    const resultMessage = document.getElementById("resultMessage");
+
+    // Target each reel
     const reels = [
       document.getElementById("reel1"),
       document.getElementById("reel2"),
       document.getElementById("reel3"),
     ];
-    const resultMessage = document.getElementById("resultMessage");
-    const lever = document.getElementById("lever");
 
-    function spinReels() {
-      resultMessage.textContent = ""; // Clear previous result
-
-      const results = [];
-      reels.forEach((reel, index) => {
-        const shuffledSymbols = [...symbols, ...symbols, ...symbols];
-        reel.innerHTML = shuffledSymbols
-          .map(symbol => `<div class="symbol">${symbol}</div>`)
-          .join("");
-        const stopAt = Math.floor(Math.random() * shuffledSymbols.length);
-        const scrollAmount = stopAt * 100;
-        results.push(shuffledSymbols[stopAt]);
-
-        setTimeout(() => {
-          reel.scrollTop = scrollAmount;
-          if (index === reels.length - 1) checkResult(results);
-        }, 1000 + index * 200);
-      });
+    // Function to generate random symbol
+    function getRandomSymbol() {
+      return symbols[Math.floor(Math.random() * symbols.length)];
     }
 
-    function checkResult(results) {
+    // Spin the reels
+    function spinReels() {
+      // Clear previous result
+      resultMessage.textContent = "Spinning...";
+
+      // Set a timeout to simulate spinning
+      setTimeout(() => {
+        const results = [];
+
+        // Update each reel with a random symbol
+        reels.forEach((reel, index) => {
+          const symbol = getRandomSymbol();
+          reel.textContent = symbol;
+          results.push(symbol);
+        });
+
+        // Check results
+        checkResults(results);
+      }, 1000); // 1-second delay for "spinning"
+    }
+
+    // Check the results for wins
+    function checkResults(results) {
       const [first, second, third] = results;
+
       if (first === second && second === third) {
-        resultMessage.textContent = `🎉 Jackpot! You win 20 ς!`;
+        resultMessage.textContent = `🎉 Jackpot! You win!`;
       } else if (first === second || second === third || first === third) {
-        resultMessage.textContent = `✨ You win 5 ς!`;
+        resultMessage.textContent = `✨ You matched two symbols!`;
       } else {
         resultMessage.textContent = `😞 Try again!`;
       }
     }
 
-    lever.addEventListener("click", () => {
-      lever.classList.add("active");
-      setTimeout(() => {
-        lever.classList.remove("active");
-        spinReels();
-      }, 300);
-    });
+    // Add event listener to the spin button
+    spinButton.addEventListener("click", spinReels);
   </script>
 </body>
 </html>
