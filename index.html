@@ -3,109 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Westwood Casino - Dashboard</title>
+  <title>Westwood Casino Dashboard</title>
   <style>
+    /* General Styling */
     body {
       font-family: Arial, sans-serif;
-      background-color: #1e1e2f;
+      background: radial-gradient(circle, #1e1e2f, #000);
       color: #fff;
       text-align: center;
       margin: 0;
       padding: 0;
     }
 
-    .blackjack-table {
-      position: relative;
-      margin: 50px auto;
-      width: 800px;
-      height: 500px;
-      background: radial-gradient(circle, #006600, #003300);
-      border-radius: 50%;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-      border: 10px solid #d4af37;
-    }
-
-    .table-center {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-    }
-
-    .table-center h1 {
-      font-size: 2.5rem;
+    h1 {
+      font-size: 3rem;
       color: #ffcc00;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+      margin: 20px 0;
+    }
+
+    .instructions {
+      font-size: 1.2rem;
+      color: #ccc;
+      margin: 10px 0 20px 0;
+    }
+
+    /* Casino Table Styling */
+    .casino-table {
+      position: relative;
+      width: 90%;
+      max-width: 900px;
+      margin: 30px auto;
+      background: linear-gradient(to bottom, #357a38, #2e6b32);
+      border: 5px solid #d4af37;
+      border-radius: 50px;
+      padding: 40px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Card Grid */
+    .card-grid {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    /* Individual Cards */
+    .game-card {
+      position: relative;
+      width: 150px;
+      height: 200px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Card Icon (Ace Style) */
+    .card-icon {
+      font-size: 3rem;
+      font-weight: bold;
       margin-bottom: 10px;
     }
 
-    .table-center p {
+    .card-title {
       font-size: 1.2rem;
-      color: #fff;
-      margin-top: -10px;
-    }
-
-    .card-buttons {
-      display: flex;
-      justify-content: space-around;
-      position: absolute;
-      bottom: 20%;
-      left: 10%;
-      width: 80%;
-    }
-
-    .card-button {
-      width: 100px;
-      height: 140px;
-      background: white;
-      border-radius: 8px;
-      border: 2px solid #000;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-      position: relative;
-      cursor: pointer;
-      text-align: center;
-      font-family: 'Georgia', serif;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .card-button:hover {
-      transform: scale(1.1);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7);
-    }
-
-    .card-button .card-rank {
-      font-size: 2rem;
       font-weight: bold;
-      color: #000;
-      position: absolute;
-      top: 10px;
-      left: 10px;
+      color: #222;
+      text-align: center;
     }
 
-    .card-button .card-suit {
-      font-size: 2rem;
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-    }
-
-    .spades {
+    .card-icon.spades {
       color: black;
     }
 
-    .hearts {
+    .card-icon.hearts {
       color: red;
     }
 
-    .clubs {
-      color: black;
+    .card-icon.diamonds {
+      color: #3498db;
     }
 
-    .diamonds {
-      color: red;
-    }
-
+    /* Back Link */
     .back-link {
       margin-top: 20px;
       color: #ccc;
@@ -117,44 +109,25 @@
     .back-link:hover {
       color: #fff;
     }
-
-    .card-table-rules {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      color: #d4af37;
-      font-size: 0.9rem;
-      text-align: center;
-      font-weight: bold;
-    }
   </style>
 </head>
 <body>
-  <div class="blackjack-table">
-    <div class="table-center">
-      <h1>Welcome to Westwood Casino</h1>
-      <p>Choose your game to start playing!</p>
-    </div>
-    <div class="card-buttons">
-      <div class="card-button" onclick="window.location.href='slots.html'">
-        <div class="card-rank">A</div>
-        <div class="card-suit spades">♠</div>
+  <h1>Welcome to Westwood Casino</h1>
+  <p class="instructions">Select a game below to start playing!</p>
+  <div class="casino-table">
+    <div class="card-grid">
+      <div class="game-card" onclick="window.location.href='slots.html'">
+        <div class="card-icon spades">A</div>
+        <div class="card-title">Slots</div>
       </div>
-      <div class="card-button" onclick="window.location.href='plinko.html'">
-        <div class="card-rank">A</div>
-        <div class="card-suit hearts">♥</div>
+      <div class="game-card" onclick="window.location.href='plinko.html'">
+        <div class="card-icon hearts">A</div>
+        <div class="card-title">Plinko</div>
       </div>
-      <div class="card-button" onclick="window.location.href='scratch.html'">
-        <div class="card-rank">A</div>
-        <div class="card-suit clubs">♣</div>
+      <div class="game-card" onclick="window.location.href='scratch.html'">
+        <div class="card-icon diamonds">A</div>
+        <div class="card-title">Scratch-Offs</div>
       </div>
-      <div class="card-button" onclick="window.location.href='blackjack.html'">
-        <div class="card-rank">A</div>
-        <div class="card-suit diamonds">♦</div>
-      </div>
-    </div>
-    <div class="card-table-rules">
-      <p>Play responsibly | Use school currency (ς) | All rights reserved</p>
     </div>
   </div>
   <a href="index.html" class="back-link">← Back to Main Menu</a>
