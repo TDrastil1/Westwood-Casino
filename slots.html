@@ -32,7 +32,7 @@
     .slots-machine {
       position: relative;
       width: 700px;
-      height: 350px;
+      height: 400px;
       margin: 50px auto;
       background: linear-gradient(to bottom, #444, #222);
       border-radius: 15px;
@@ -50,7 +50,7 @@
       background: linear-gradient(to bottom, #333, #111);
       border-radius: 10px;
       width: 70%;
-      height: 200px;
+      height: 250px;
       padding: 10px;
       box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.7);
       overflow: hidden;
@@ -59,7 +59,7 @@
     /* Individual Reel */
     .reel {
       position: relative;
-      width: 150px;
+      width: 200px;
       height: 100%;
       background: linear-gradient(to bottom, #fff, #e6e6e6);
       border-radius: 10px;
@@ -74,32 +74,32 @@
 
     /* Reel Symbols */
     .symbol {
-      font-size: 3rem;
+      font-size: 4rem;
       font-weight: bold;
       color: #ff0000;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5), 0 -2px 5px rgba(255, 255, 255, 0.8);
-      height: 50px;
+      height: 100px;
     }
 
     /* Lever Container */
     .lever-container {
       position: relative;
-      width: 100px;
-      height: 300px;
+      width: 120px;
+      height: 350px;
       background: linear-gradient(to bottom, #8B0000, #550000);
       border-radius: 10px;
-      margin-left: 30px;
+      margin-left: 20px;
       box-shadow: 0 8px 15px rgba(0, 0, 0, 0.7);
     }
 
     /* Lever Stick */
     .lever-stick {
       position: absolute;
-      bottom: 50px;
+      top: 50px;
       left: 50%;
       transform: translateX(-50%);
       width: 15px;
-      height: 200px;
+      height: 250px;
       background: linear-gradient(to bottom, #444, #222);
       border-radius: 10px;
       z-index: 2;
@@ -110,7 +110,7 @@
     /* Lever Ball */
     .lever-ball {
       position: absolute;
-      bottom: 0;
+      top: 0;
       left: 50%;
       transform: translateX(-50%);
       width: 60px;
@@ -124,11 +124,11 @@
 
     /* Lever Active */
     .lever-container.active .lever-stick {
-      transform: translateX(-50%) rotate(30deg);
+      transform: translateX(-50%) translateY(200px);
     }
 
     .lever-container.active .lever-ball {
-      transform: translateX(-50%) translateY(30px);
+      transform: translateX(-50%) translateY(270px);
     }
 
     /* Spin Result */
@@ -176,12 +176,6 @@
         <div class="symbol">🔔</div>
         <div class="symbol">💎</div>
       </div>
-      <div class="reel" id="reel4">
-        <div class="symbol">🍒</div>
-        <div class="symbol">🍋</div>
-        <div class="symbol">🔔</div>
-        <div class="symbol">💎</div>
-      </div>
     </div>
     <div class="lever-container" id="lever">
       <div class="lever-stick"></div>
@@ -197,7 +191,6 @@
       document.getElementById("reel1"),
       document.getElementById("reel2"),
       document.getElementById("reel3"),
-      document.getElementById("reel4")
     ];
     const resultMessage = document.getElementById("resultMessage");
     const lever = document.getElementById("lever");
@@ -205,19 +198,27 @@
     function spinReels() {
       resultMessage.textContent = ""; // Clear message
       reels.forEach((reel, index) => {
-        reel.classList.add("spinning");
+        const reelSymbols = [...symbols, ...symbols, ...symbols];
+        reel.innerHTML = reelSymbols
+          .map(symbol => `<div class="symbol">${symbol}</div>`)
+          .join("");
+        reel.scrollTop = 0;
+
+        const stopAt = Math.floor(Math.random() * reelSymbols.length);
+        const scrollDistance = stopAt * 100;
+
         setTimeout(() => {
-          reel.classList.remove("spinning");
-          const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-          reel.innerHTML = `<div class="symbol">${randomSymbol}</div>`;
+          reel.scrollTop = scrollDistance;
           if (index === reels.length - 1) checkResult();
-        }, 2000 + index * 300); // Staggered stopping
+        }, 2000 + index * 300);
       });
     }
 
     function checkResult() {
-      const [first, second, third, fourth] = reels.map(reel => reel.textContent.trim());
-      if (first === second && second === third && third === fourth) {
+      const [first, second, third] = reels.map(
+        reel => reel.children[0].textContent.trim()
+      );
+      if (first === second && second === third) {
         resultMessage.textContent = `🎉 Jackpot! You matched ${first}!`;
       } else {
         resultMessage.textContent = `😞 Try again!`;
