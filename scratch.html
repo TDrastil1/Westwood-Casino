@@ -71,6 +71,7 @@
     const scratchLayer = document.querySelector(".scratch-layer");
     const prize = document.getElementById("prize");
 
+    // Set canvas dimensions
     canvas.width = 300;
     canvas.height = 200;
 
@@ -116,7 +117,7 @@
       const scratchedPercentage = (scratchedPixels / (pixels.length / 4)) * 100;
       if (scratchedPercentage > 60) {
         canvas.style.display = "none";
-        prize.style.color = "#ffd700";
+        prize.style.color = "#ffd700"; // Highlight prize message
       }
     };
 
