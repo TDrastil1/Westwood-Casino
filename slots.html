@@ -5,98 +5,138 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Slots - Westwood Casino</title>
   <style>
+    /* General Body Styling */
     body {
       font-family: Arial, sans-serif;
-      background-color: #1e1e2f;
+      background: radial-gradient(circle, #1e1e2f, #000);
       color: #fff;
       text-align: center;
       margin: 0;
       padding: 0;
     }
 
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      padding: 20px;
-    }
-
     h1 {
       font-size: 3rem;
       color: #ffcc00;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+      margin: 20px 0;
     }
 
+    .instructions {
+      font-size: 1.2rem;
+      color: #ccc;
+      margin: 10px 0 20px 0;
+    }
+
+    /* Slots Machine Container */
     .slots-machine {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
+      width: 500px;
+      margin: 50px auto;
+      background: linear-gradient(to bottom, #4c4c4c, #1e1e1e);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7), inset 0 2px 10px rgba(255, 255, 255, 0.1);
     }
 
-    .reel {
-      width: 80px;
-      height: 100px;
-      background-color: #444;
-      margin: 0 10px;
+    /* Frame around the reels */
+    .reel-container {
+      display: flex;
+      justify-content: space-around;
+      background: linear-gradient(to bottom, #222, #111);
+      padding: 10px;
       border-radius: 10px;
+      box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Individual reel */
+    .reel {
+      width: 120px;
+      height: 150px;
+      background: linear-gradient(to bottom, #fff, #e6e6e6);
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 2px 10px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
-      color: #ffcc00;
-      overflow: hidden;
-      position: relative;
     }
 
-    .reel .symbols {
-      position: absolute;
-      animation: spin infinite 0.3s linear;
+    /* Symbols inside the reel */
+    .symbol {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #ff0000;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5), 0 -2px 5px rgba(255, 255, 255, 0.8);
     }
 
+    /* Animation for spinning */
     @keyframes spin {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-100%); }
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(-600%);
+      }
     }
 
-    .lever {
-      position: absolute;
-      right: -80px;
-      width: 30px;
-      height: 100px;
-      background-color: #555;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: transform 0.2s ease-in-out;
+    .reel.spinning .symbol {
+      animation: spin 2s linear infinite;
     }
 
-    .lever:hover {
-      transform: scale(1.1);
-    }
-
-    .lever-ball {
-      width: 30px;
-      height: 30px;
-      background-color: #ffcc00;
-      border-radius: 50%;
-      position: absolute;
-      top: 10px;
-      left: 0;
-      transition: top 0.3s ease-in-out;
-    }
-
-    .lever:active .lever-ball {
-      top: 60px;
-    }
-
-    .result-message {
-      margin-top: 20px;
+    /* Spin Button */
+    .spin-button {
+      background: linear-gradient(to bottom, #ffcc00, #d4af37);
+      color: #111;
       font-size: 1.5rem;
+      font-weight: bold;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
+    .spin-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Lever */
+    .lever {
+      position: relative;
+      width: 20px;
+      height: 100px;
+      background: linear-gradient(to bottom, #ff0000, #aa0000);
+      border-radius: 10px;
+      margin: 20px auto 0;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+    }
+
+    .lever:before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle, #fff, #ccc);
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Spin result message */
+    .spin-result {
+      font-size: 1.5rem;
+      color: #ffcc00;
+      margin-top: 20px;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Back link */
     .back-link {
       margin-top: 20px;
       color: #ccc;
@@ -111,84 +151,61 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Slots</h1>
-    <p>Pull the lever to spin the reels and test your luck!</p>
-    <div class="slots-machine">
+  <h1>Slots</h1>
+  <p class="instructions">Pull the lever or press the spin button to test your luck!</p>
+  <div class="slots-machine">
+    <div class="reel-container">
       <div class="reel" id="reel1">
-        <div class="symbols">🍒🍋🍇⭐7🍒🍋🍇⭐7</div>
+        <div class="symbol">🍒</div>
       </div>
       <div class="reel" id="reel2">
-        <div class="symbols">⭐7🍇🍋🍒⭐7🍇🍋🍒</div>
+        <div class="symbol">🍋</div>
       </div>
       <div class="reel" id="reel3">
-        <div class="symbols">🍇🍋🍒⭐7🍇🍋🍒⭐7</div>
-      </div>
-      <div class="reel" id="reel4">
-        <div class="symbols">🍋🍒7⭐🍇🍋🍒7⭐🍇</div>
-      </div>
-      <div class="lever" onclick="pullLever()">
-        <div class="lever-ball"></div>
+        <div class="symbol">🔔</div>
       </div>
     </div>
-    <p id="result" class="result-message"></p>
-    <a href="index.html" class="back-link">← Back to Home</a>
+    <button class="spin-button" id="spinButton">Spin</button>
+    <div class="lever" id="lever"></div>
+    <p class="spin-result" id="resultMessage"></p>
   </div>
+  <a href="index.html" class="back-link">← Back to Home</a>
 
   <script>
-    function pullLever() {
-      const reels = [
-        document.getElementById('reel1'),
-        document.getElementById('reel2'),
-        document.getElementById('reel3'),
-        document.getElementById('reel4')
-      ];
+    // Slot symbols
+    const symbols = ["🍒", "🍋", "🔔", "⭐", "💎", "🍉"];
+    const reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")];
+    const resultMessage = document.getElementById("resultMessage");
 
-      const symbols = ['🍒', '🍋', '🍇', '⭐', '7'];
-      const result = document.getElementById('result');
+    // Function to spin the reels
+    function spinReels() {
+      resultMessage.textContent = ""; // Clear the result message
 
-      // Reset result message
-      result.innerText = '';
-      result.style.color = '';
-
-      // Spin each reel with animation
       reels.forEach((reel, index) => {
-        const reelSymbols = reel.querySelector('.symbols');
-        reelSymbols.style.animation = 'spin infinite 0.3s linear';
+        reel.classList.add("spinning"); // Add spinning animation
 
         setTimeout(() => {
-          // Stop spinning after a delay
-          reelSymbols.style.animation = 'none';
-
-          // Randomly choose a symbol
+          reel.classList.remove("spinning"); // Stop spinning after 2 seconds
           const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-          reelSymbols.innerText = randomSymbol;
-
-          // Check results after the last reel stops
-          if (index === reels.length - 1) {
-            setTimeout(() => {
-              checkResults(reels);
-            }, 500);
-          }
-        }, 1000 + index * 500); // Stagger stopping times
+          reel.innerHTML = `<div class="symbol">${randomSymbol}</div>`;
+          checkResult();
+        }, 2000 + index * 300); // Stagger the reel stopping times
       });
     }
 
-    function checkResults(reels) {
-      const result = document.getElementById('result');
-      const results = reels.map((reel) => reel.querySelector('.symbols').innerText);
-
-      if (results.every((symbol) => symbol === results[0])) {
-        result.innerText = `🎉 JACKPOT! You win 200 ς!`;
-        result.style.color = '#28a745';
-      } else if (results.slice(0, 3).every((symbol) => symbol === results[0])) {
-        result.innerText = `✨ You win 50 ς!`;
-        result.style.color = '#ffc107';
+    // Function to check if the player wins
+    function checkResult() {
+      const [first, second, third] = reels.map((reel) => reel.textContent.trim());
+      if (first === second && second === third) {
+        resultMessage.textContent = `🎉 Jackpot! You matched ${first}!`;
       } else {
-        result.innerText = `😞 House wins! Try again.`;
-        result.style.color = '#ff4444';
+        resultMessage.textContent = `😞 Try again!`;
       }
     }
+
+    // Event listeners for spin button and lever
+    document.getElementById("spinButton").addEventListener("click", spinReels);
+    document.getElementById("lever").addEventListener("click", spinReels);
   </script>
 </body>
 </html>
