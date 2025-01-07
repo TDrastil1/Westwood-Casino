@@ -1,58 +1,29 @@
 // Elements
 const canvas = document.getElementById("scratch");
 const context = canvas.getContext("2d");
-const valuesContainer = document.getElementById("valuesContainer");
 const resultMessage = document.getElementById("resultMessage");
 
-// Possible values for the scratch card
-const values = ["$10", "$20", "$50", "$100", "$500"];
-
-// Initialize the scratch area and values
+// Initialize the scratch area
 const init = () => {
-  // Set the scratch card background gradient
+  // Set dark-themed scratch area background
   const gradientColor = context.createLinearGradient(0, 0, canvas.width, canvas.height);
-  gradientColor.addColorStop(0, "#c3a3f1");
-  gradientColor.addColorStop(1, "#6414e9");
+  gradientColor.addColorStop(0, "#333");
+  gradientColor.addColorStop(1, "#444");
   context.fillStyle = gradientColor;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Randomize values for the scratch card
-  randomizeValues();
+  // Randomize the outcome
+  randomizeOutcome();
 };
 
-// Generate random values and check for a win condition
-const randomizeValues = () => {
-  const chosenValues = [];
-  valuesContainer.innerHTML = ""; // Clear any previous values
-  for (let i = 0; i < 6; i++) {
-    const randomValue = values[Math.floor(Math.random() * values.length)];
-    chosenValues.push(randomValue);
-    const h3 = document.createElement("h3");
-    h3.textContent = randomValue;
-    h3.classList.add("hidden-value"); // Add class for styling
-    valuesContainer.appendChild(h3);
-  }
-  checkForWin(chosenValues);
+// Randomize the outcome for the scratch card
+const randomizeOutcome = () => {
+  const outcome = Math.random() < 0.05 ? "🎉 You Win $100!" : "😞 Try Again Next Time.";
+  resultMessage.textContent = outcome;
+  resultMessage.style.display = "none"; // Hide until fully scratched
 };
 
-// Check if there are 3 or more identical values (win condition)
-const checkForWin = (chosenValues) => {
-  const counts = {};
-  chosenValues.forEach((value) => {
-    counts[value] = (counts[value] || 0) + 1;
-  });
-  for (let value in counts) {
-    if (counts[value] >= 3) {
-      resultMessage.textContent = `🎉 You win! Found 3 or more of ${value}!`;
-      resultMessage.style.color = "#28a745"; // Green for success
-      return;
-    }
-  }
-  resultMessage.textContent = "😞 Better luck next time!";
-  resultMessage.style.color = "#ff4444"; // Red for failure
-};
-
-// Scratch functionality on the canvas
+// Scratch functionality
 let isScratching = false;
 
 // Scratch the canvas at specified coordinates
@@ -71,12 +42,32 @@ const getXY = (e) => {
   return { x, y };
 };
 
+// Check if the scratch area is sufficiently revealed
+const checkScratchCompletion = () => {
+  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  const totalPixels = imageData.data.length / 4;
+  let revealedPixels = 0;
+
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    if (imageData.data[i + 3] === 0) {
+      revealedPixels++; // Count transparent pixels
+    }
+  }
+
+  const revealedPercentage = (revealedPixels / totalPixels) * 100;
+  if (revealedPercentage > 70) {
+    resultMessage.style.display = "block"; // Reveal the outcome
+    canvas.style.pointerEvents = "none"; // Disable further scratching
+  }
+};
+
 // Add event listeners for scratch functionality
 ["mousedown", "touchstart"].forEach((event) => {
   canvas.addEventListener(event, (e) => {
     isScratching = true;
     const { x, y } = getXY(e);
     scratch(x, y);
+    checkScratchCompletion();
   });
 });
 
@@ -86,6 +77,7 @@ const getXY = (e) => {
       e.preventDefault();
       const { x, y } = getXY(e);
       scratch(x, y);
+      checkScratchCompletion();
     }
   });
 });
@@ -96,5 +88,5 @@ const getXY = (e) => {
   });
 });
 
-// Initialize the scratch card functionality on window load
+// Initialize the scratch card on window load
 window.onload = init;
