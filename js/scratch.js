@@ -1,56 +1,42 @@
-const canvas = document.getElementById("scratchCanvas");
-const ctx = canvas.getContext("2d");
-const scratchLayer = document.querySelector(".scratch-layer");
 const prize = document.getElementById("prize");
+const scratchOverlay = document.getElementById("scratchOverlay");
+const coin = document.getElementById("coin");
 
-// Set canvas dimensions
-canvas.width = 300;
-canvas.height = 200;
+// Randomize the outcome (90% lose, 10% win)
+const outcome = Math.random() < 0.1 ? "win" : "lose";
+prize.textContent = outcome === "win" ? "🎉 You Win 100 ς! 🎉" : "😞 Try Again!";
 
-// Fill canvas with grey scratch-off layer
-ctx.fillStyle = "#aaa";
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+// Scratch effect animation
+coin.addEventListener("click", () => {
+  const scratchAnimation = setInterval(() => {
+    const rect = scratchOverlay.getBoundingClientRect();
+    const randomX = Math.random() * rect.width;
+    const randomY = Math.random() * rect.height;
 
-// Scratch effect variables
-let isScratching = false;
+    const ctx = scratchOverlay.getContext("2d");
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.beginPath();
+    ctx.arc(randomX, randomY, 20, 0, Math.PI * 2);
+    ctx.fill();
+  }, 50);
 
-// Scratch functionality
-canvas.addEventListener("mousedown", () => {
-  isScratching = true;
+  setTimeout(() => {
+    clearInterval(scratchAnimation);
+    scratchOverlay.style.display = "none";
+    prize.style.color = outcome === "win" ? "#ffd700" : "#ff4444";
+  }, 2000); // Scratch animation duration
 });
 
-canvas.addEventListener("mouseup", () => {
-  isScratching = false;
-});
+// Initialize canvas for scratch overlay
+function initScratchOverlay() {
+  const canvas = document.createElement("canvas");
+  canvas.width = scratchOverlay.offsetWidth;
+  canvas.height = scratchOverlay.offsetHeight;
+  scratchOverlay.appendChild(canvas);
 
-canvas.addEventListener("mousemove", (e) => {
-  if (!isScratching) return;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#aaa";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
 
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-
-  ctx.globalCompositeOperation = "destination-out";
-  ctx.beginPath();
-  ctx.arc(x, y, 15, 0, Math.PI * 2);
-  ctx.fill();
-});
-
-// Remove scratch layer when sufficient area is revealed
-const checkScratchCompletion = () => {
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const pixels = imageData.data;
-  let scratchedPixels = 0;
-
-  for (let i = 3; i < pixels.length; i += 4) {
-    if (pixels[i] === 0) scratchedPixels++; // Check alpha value
-  }
-
-  const scratchedPercentage = (scratchedPixels / (pixels.length / 4)) * 100;
-  if (scratchedPercentage > 60) {
-    canvas.style.display = "none";
-    prize.style.color = "#ffd700"; // Highlight prize message
-  }
-};
-
-canvas.addEventListener("mousemove", checkScratchCompletion);
+initScratchOverlay();
