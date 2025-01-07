@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Westwood Casino Dashboard</title>
   <style>
-    /* General Styling */
+    /* General Body Styling */
     body {
       font-family: Arial, sans-serif;
       background: radial-gradient(circle, #1e1e2f, #000);
       color: #fff;
-      text-align: center;
       margin: 0;
       padding: 0;
+      text-align: center;
     }
 
     h1 {
       font-size: 3rem;
       color: #ffcc00;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-      margin: 20px 0;
+      margin-top: 20px;
     }
 
     .instructions {
@@ -28,41 +28,55 @@
       margin: 10px 0 20px 0;
     }
 
-    /* Casino Table Styling */
-    .casino-table {
+    /* Blackjack Table Styling */
+    .blackjack-table {
       position: relative;
-      width: 90%;
+      width: 80%;
       max-width: 900px;
-      margin: 30px auto;
-      background: linear-gradient(to bottom, #357a38, #2e6b32);
+      height: 400px;
+      margin: 50px auto;
+      background: linear-gradient(to bottom, #357a38, #285c2b);
       border: 5px solid #d4af37;
-      border-radius: 50px;
-      padding: 40px;
+      border-radius: 50% 50% 0 0;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 50px 20px 20px 20px;
     }
 
-    /* Card Grid */
-    .card-grid {
+    .indent {
+      position: absolute;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 50px;
+      background: #222;
+      border-radius: 0 0 50px 50px;
+    }
+
+    /* Cards Grid */
+    .cards-grid {
       display: flex;
       justify-content: space-around;
       align-items: center;
-      flex-wrap: wrap;
-      margin-top: 20px;
+      width: 100%;
     }
 
-    /* Individual Cards */
+    /* Individual Card Styling */
     .game-card {
-      position: relative;
-      width: 150px;
-      height: 200px;
+      width: 120px;
+      height: 170px;
       background: #fff;
       border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+      cursor: pointer;
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
       transition: transform 0.3s, box-shadow 0.3s;
     }
 
@@ -71,30 +85,34 @@
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
     }
 
-    /* Card Icon (Ace Style) */
-    .card-icon {
-      font-size: 3rem;
+    /* Card Corner A */
+    .card-corner {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 1.5rem;
       font-weight: bold;
-      margin-bottom: 10px;
     }
 
-    .card-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #222;
-      text-align: center;
-    }
-
-    .card-icon.spades {
+    .card-corner.spades {
       color: black;
     }
 
-    .card-icon.hearts {
+    .card-corner.hearts {
       color: red;
     }
 
-    .card-icon.diamonds {
+    .card-corner.diamonds {
       color: #3498db;
+    }
+
+    /* Card Title */
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+      margin-top: auto;
+      color: #333;
     }
 
     /* Back Link */
@@ -114,21 +132,25 @@
 <body>
   <h1>Welcome to Westwood Casino</h1>
   <p class="instructions">Select a game below to start playing!</p>
-  <div class="casino-table">
-    <div class="card-grid">
+  <div class="blackjack-table">
+    <div class="cards-grid">
+      <!-- Slots Card -->
       <div class="game-card" onclick="window.location.href='slots.html'">
-        <div class="card-icon spades">A</div>
+        <div class="card-corner spades">A</div>
         <div class="card-title">Slots</div>
       </div>
+      <!-- Plinko Card -->
       <div class="game-card" onclick="window.location.href='plinko.html'">
-        <div class="card-icon hearts">A</div>
+        <div class="card-corner hearts">A</div>
         <div class="card-title">Plinko</div>
       </div>
+      <!-- Scratch-Offs Card -->
       <div class="game-card" onclick="window.location.href='scratch.html'">
-        <div class="card-icon diamonds">A</div>
+        <div class="card-corner diamonds">A</div>
         <div class="card-title">Scratch-Offs</div>
       </div>
     </div>
+    <div class="indent"></div>
   </div>
   <a href="index.html" class="back-link">← Back to Main Menu</a>
 </body>
