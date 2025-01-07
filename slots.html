@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Slot Machine</title>
+  <title>Realistic Slot Machine</title>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: radial-gradient(circle, #222, #000);
+      background: radial-gradient(circle, #111, #000);
       color: white;
       text-align: center;
       display: flex;
@@ -22,7 +22,6 @@
       font-size: 2.5rem;
       color: #ffd700;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-      margin-bottom: 20px;
     }
 
     .slot-machine {
@@ -30,7 +29,7 @@
       width: 400px;
       height: 300px;
       background: #333;
-      border-radius: 15px;
+      border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
       overflow: hidden;
     }
@@ -38,7 +37,7 @@
     .reels-container {
       display: flex;
       justify-content: space-around;
-      margin: 20px;
+      margin: 30px;
       height: 150px;
       background: #000;
       border-radius: 10px;
@@ -46,13 +45,13 @@
     }
 
     .reel {
-      width: 80px;
+      width: 90px;
       height: 150px;
-      background: #444;
+      background: linear-gradient(to bottom, #444, #222);
       border-radius: 10px;
-      position: relative;
-      overflow: hidden;
       border: 2px solid #333;
+      overflow: hidden;
+      position: relative;
     }
 
     .symbol {
@@ -62,44 +61,44 @@
       text-align: center;
       line-height: 50px;
       height: 50px;
-      border-bottom: 1px solid #222;
     }
 
     /* Lever Styling */
     .lever-container {
       position: absolute;
-      right: -50px;
+      right: -70px;
       top: 50%;
       transform: translateY(-50%);
-      width: 50px;
-      height: 200px;
+      width: 70px;
+      height: 300px;
       background: linear-gradient(to bottom, #8b0000, #550000);
-      border-radius: 5px;
+      border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
-      cursor: pointer;
     }
 
     .lever-stick {
       position: absolute;
-      top: 20px;
+      top: 30px;
       left: 50%;
       transform: translateX(-50%);
       width: 10px;
-      height: 100px;
+      height: 150px;
       background: #444;
       border-radius: 5px;
+      transition: transform 0.2s ease-in-out;
     }
 
     .lever-ball {
       position: absolute;
-      bottom: 10px;
+      bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
       background: radial-gradient(circle, #ff0000, #aa0000);
       border-radius: 50%;
       box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+      transition: transform 0.2s ease-in-out;
     }
 
     .result-message {
@@ -111,7 +110,7 @@
   </style>
 </head>
 <body>
-  <h1>Slot Machine</h1>
+  <h1>Realistic Slot Machine</h1>
   <div class="slot-machine">
     <div class="reels-container">
       <div class="reel" id="reel1"></div>
@@ -119,8 +118,8 @@
       <div class="reel" id="reel3"></div>
     </div>
     <div class="lever-container" id="lever">
-      <div class="lever-stick"></div>
-      <div class="lever-ball"></div>
+      <div class="lever-stick" id="leverStick"></div>
+      <div class="lever-ball" id="leverBall"></div>
     </div>
   </div>
   <p class="result-message" id="resultMessage">Pull the lever to spin!</p>
@@ -133,9 +132,10 @@
       document.getElementById("reel3"),
     ];
     const resultMessage = document.getElementById("resultMessage");
-    const lever = document.getElementById("lever");
+    const leverStick = document.getElementById("leverStick");
+    const leverBall = document.getElementById("leverBall");
 
-    // Populate each reel with symbols
+    // Populate reels with symbols
     function populateReel(reel) {
       reel.innerHTML = symbols
         .map((symbol) => `<div class="symbol">${symbol}</div>`)
@@ -149,12 +149,12 @@
       resultMessage.textContent = "Spinning...";
       const results = [];
 
-      reels.forEach((reel, index) => {
+      reels.forEach((reel) => {
         const randomIndex = Math.floor(Math.random() * symbols.length);
         const stopAt = randomIndex * -50; // Each symbol is 50px tall
         results.push(symbols[randomIndex]);
 
-        // Animate the reel
+        // Animate reel spin
         reel.style.transition = "transform 1s ease-out";
         reel.style.transform = `translateY(${stopAt}px)`;
 
@@ -166,13 +166,11 @@
         }, 1000);
       });
 
-      // Display the result after the spin
-      setTimeout(() => {
-        checkResults(results);
-      }, 1000);
+      // Display results
+      setTimeout(() => checkResults(results), 1000);
     }
 
-    // Check the results
+    // Check results
     function checkResults(results) {
       const [first, second, third] = results;
 
@@ -185,15 +183,19 @@
       }
     }
 
-    // Lever animation and interaction
-    lever.addEventListener("click", () => {
-      lever.classList.add("active");
-      lever.style.transform = "rotate(30deg)";
+    // Lever functionality
+    function pullLever() {
+      leverStick.style.transform = "translateX(-50%) rotate(30deg)";
+      leverBall.style.transform = "translateX(-50%) translateY(20px)";
       setTimeout(() => {
-        lever.style.transform = "rotate(0)";
+        leverStick.style.transform = "translateX(-50%) rotate(0)";
+        leverBall.style.transform = "translateX(-50%) translateY(0)";
         spinReels();
-      }, 300); // Trigger reels when lever is pulled down
-    });
+      }, 300);
+    }
+
+    leverStick.addEventListener("click", pullLever);
+    leverBall.addEventListener("click", pullLever);
   </script>
 </body>
 </html>
