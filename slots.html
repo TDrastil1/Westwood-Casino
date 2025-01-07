@@ -5,141 +5,148 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Slot Machine</title>
   <style>
-    /* General Styling */
+    /* Debug Styling */
+    .debug {
+      position: fixed; 
+      top: 4px; 
+      left: 50%; 
+      transform: translateX(-50%); 
+      padding: 4px; 
+      background: white;
+      border: 1px solid rgba(0, 0, 0, 0.3); 
+      font-family: monospace; 
+      font-size: 1.6rem;
+    }
+
+    html, body { 
+      height: 100%; 
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: radial-gradient(circle, #222, #000);
-      color: white;
-      margin: 0;
-      padding: 0;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      color: #ffd700;
-      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-      margin-top: 20px;
-    }
-
-    .slot-machine {
-      margin: 50px auto;
-      width: 400px;
-      padding: 20px;
-      background: #333;
-      border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-    }
-
-    .reels {
       display: flex;
-      justify-content: space-around;
-      margin: 20px 0;
-      overflow: hidden;
-      height: 100px;
-      background: #000;
-      border-radius: 5px;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(45deg, grey 0%, lightgray 100%);
+    }
+
+    .slots {
+      position: relative;
+      width: calc(3.5 * 79px);
+      height: calc(3 * 79px);
+      display: flex;
+      justify-content: space-between;
+      padding: calc(0.3 * 79px);
+      background: linear-gradient(45deg, grey 0%, lightgray 100%);
+      border-top: 1px solid rgba(255, 255, 255, 0.6);
+      border-right: 1px solid rgba(255, 255, 255, 0.6);
+      border-left: 1px solid rgba(0, 0, 0, 0.4);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+      box-shadow: -2px 2px 3px rgba(0, 0, 0, 0.3);
+      border-radius: 3px;
+    }
+
+    .slots::before, 
+    .slots::after {
+      content:"";
+      position: absolute;
+      top: 50%;
+      width: 10px;
+      height: 2px;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .slots::before {
+      left: 0;
+      transform: translate(-200%, -50%);
+    }
+
+    .slots::after {
+      right: 0;
+      transform: translate(200%, -50%);
+    }
+
+    @keyframes win1 {
+      0% { 
+        background: linear-gradient(45deg, orange 0%, yellow 100%); 
+        box-shadow: 0 0 80px orange; 
+      }
+      100% { 
+        background: linear-gradient(45deg, grey 0%, lightgrey 100%);
+        box-shadow: -2px 2px 3px rgba(0, 0, 0, 0.3); 
+      }
+    }
+
+    @keyframes win2 {
+      0% { 
+        background: linear-gradient(45deg, lightblue 0%, lightgreen 100%);
+        box-shadow: 0 0 80px lightgreen; 
+      }
+      100% { 
+        background: linear-gradient(45deg, grey 0%, lightgrey 100%);
+        box-shadow: -2px 2px 3px rgba(0, 0, 0, 0.3); 
+      }
+    }
+
+    .slots.win1 {
+      animation: win1 200ms steps(2, end) infinite;
+    }
+
+    .slots.win2 {
+      animation: win2 200ms steps(2, end) infinite;
     }
 
     .reel {
-      width: 100px;
+      position: relative;
+      width: 79px;
+      height: calc(3 * 79px);
+      border: 1px solid rgba(0, 0, 0, 0.3);
+      border-radius: 3px;
+      overflow: hidden;
+      background-image: url(https://assets.codepen.io/439000/slotreel.webp);
+      background-position: 0 0;
+      background-repeat: repeat-y;
+    }
+
+    .reel::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 100%;
-      background: #444;
+      background-image: linear-gradient(rgba(0, 0, 0, 0.4) 0%, transparent 30%, transparent 70%, rgba(0, 0, 0, 0.4) 100%);
+      box-shadow: inset 0 0 6px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    p {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 100%;
+      transform: translate(-50%, calc(100% + 30px));
       text-align: center;
-      line-height: 100px;
-      font-size: 2rem;
-      color: white;
-      border: 1px solid #222;
+      font-size: 0.80rem;
+      color: #444;
     }
 
-    button {
-      padding: 10px 20px;
-      font-size: 1.2rem;
-      background: #ffd700;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      color: #333;
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    p:last-child {
+      transform: translate(-50%, calc(100% + 60px));
     }
 
-    button:hover {
-      background: #ffcc00;
-    }
-
-    #resultMessage {
-      margin-top: 20px;
-      font-size: 1.2rem;
-      color: #ffcc00;
+    a {
+      color: red; 
+      font-weight: 700; 
     }
   </style>
 </head>
 <body>
-  <div class="slot-machine">
-    <h1>Slot Machine</h1>
-    <div class="reels">
-      <div class="reel" id="reel1">🍒</div>
-      <div class="reel" id="reel2">🍋</div>
-      <div class="reel" id="reel3">💎</div>
-    </div>
-    <button id="spinButton">Spin</button>
-    <p id="resultMessage">Press Spin to play!</p>
+  <div class="slots">
+    <div class="reel"></div>
+    <div class="reel"></div>
+    <div class="reel"></div>
+    <p>Step-by-step tutorial for this pen at <a target="_blank" href="https://youtu.be/boI2B4Gpp34">YouTube</a></p>
+    <p>Want to determine the outcome?<br>Here's <a target="_blank" href="https://codepen.io/josfabre/pen/KKLwxbE">a rigged version!</a></p>
   </div>
-  <script>
-    // Slot Machine JavaScript
-
-    const symbols = ["🍒", "🍋", "🔔", "💎", "⭐", "🍉"]; // Possible symbols
-    const spinButton = document.getElementById("spinButton");
-    const resultMessage = document.getElementById("resultMessage");
-
-    // Target each reel
-    const reels = [
-      document.getElementById("reel1"),
-      document.getElementById("reel2"),
-      document.getElementById("reel3"),
-    ];
-
-    // Function to generate random symbol
-    function getRandomSymbol() {
-      return symbols[Math.floor(Math.random() * symbols.length)];
-    }
-
-    // Spin the reels
-    function spinReels() {
-      // Clear previous result
-      resultMessage.textContent = "Spinning...";
-
-      // Set a timeout to simulate spinning
-      setTimeout(() => {
-        const results = [];
-
-        // Update each reel with a random symbol
-        reels.forEach((reel, index) => {
-          const symbol = getRandomSymbol();
-          reel.textContent = symbol;
-          results.push(symbol);
-        });
-
-        // Check results
-        checkResults(results);
-      }, 1000); // 1-second delay for "spinning"
-    }
-
-    // Check the results for wins
-    function checkResults(results) {
-      const [first, second, third] = results;
-
-      if (first === second && second === third) {
-        resultMessage.textContent = `🎉 Jackpot! You win!`;
-      } else if (first === second || second === third || first === third) {
-        resultMessage.textContent = `✨ You matched two symbols!`;
-      } else {
-        resultMessage.textContent = `😞 Try again!`;
-      }
-    }
-
-    // Add event listener to the spin button
-    spinButton.addEventListener("click", spinReels);
-  </script>
+  <div id="debug" class="debug"></div>
 </body>
 </html>
