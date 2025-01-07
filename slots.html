@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Slots - Westwood Casino</title>
   <style>
-    /* General Body Styling */
+    /* General Styling */
     body {
       font-family: Arial, sans-serif;
       background: radial-gradient(circle, #1e1e2f, #000);
@@ -31,10 +31,10 @@
     /* Slots Machine Container */
     .slots-machine {
       position: relative;
-      width: 600px;
-      height: 300px;
+      width: 700px;
+      height: 350px;
       margin: 50px auto;
-      background: linear-gradient(to bottom, #333, #222);
+      background: linear-gradient(to bottom, #444, #222);
       border-radius: 15px;
       padding: 20px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7), inset 0 2px 10px rgba(255, 255, 255, 0.1);
@@ -43,60 +43,63 @@
       justify-content: space-between;
     }
 
-    /* Frame around the reels */
+    /* Reels Container */
     .reel-container {
       display: flex;
-      justify-content: space-between;
-      background: linear-gradient(to bottom, #444, #222);
-      padding: 10px;
+      justify-content: space-around;
+      background: linear-gradient(to bottom, #333, #111);
       border-radius: 10px;
+      width: 70%;
+      height: 200px;
+      padding: 10px;
       box-shadow: inset 0 5px 10px rgba(0, 0, 0, 0.7);
-      width: 400px;
-      height: 150px;
       overflow: hidden;
     }
 
-    /* Individual reel */
+    /* Individual Reel */
     .reel {
-      width: 100px;
+      position: relative;
+      width: 150px;
       height: 100%;
       background: linear-gradient(to bottom, #fff, #e6e6e6);
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 2px 10px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
-      position: relative;
+      margin: 0 5px;
     }
 
-    /* Symbols inside the reel */
+    /* Reel Symbols */
     .symbol {
       font-size: 3rem;
       font-weight: bold;
       color: #ff0000;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5), 0 -2px 5px rgba(255, 255, 255, 0.8);
+      height: 50px;
     }
 
-    /* Reel Spinning Animation */
-    .reel.spinning {
-      animation: spin 1s linear infinite;
+    /* Reel Animation */
+    .reel.spinning .symbol {
+      animation: spin 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     }
 
     @keyframes spin {
       0% {
-        transform: translateY(0);
+        transform: translateY(0%);
       }
       100% {
-        transform: translateY(-300%);
+        transform: translateY(-200%);
       }
     }
 
-    /* Lever Styling */
+    /* Lever */
     .lever-container {
       position: relative;
-      width: 60px;
-      height: 200px;
+      width: 70px;
+      height: 250px;
       background: linear-gradient(to bottom, #ff0000, #aa0000);
       border-radius: 10px;
       cursor: pointer;
@@ -105,11 +108,11 @@
 
     .lever-ball {
       position: absolute;
-      bottom: 10px;
+      bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
       background: radial-gradient(circle, #fff, #ccc);
       border-radius: 50%;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
@@ -117,7 +120,7 @@
     }
 
     .lever-container.active .lever-ball {
-      transform: translateX(-50%) translateY(-30px);
+      transform: translateX(-50%) translateY(50px);
     }
 
     /* Spin Result */
@@ -165,6 +168,12 @@
         <div class="symbol">🔔</div>
         <div class="symbol">💎</div>
       </div>
+      <div class="reel" id="reel4">
+        <div class="symbol">🍒</div>
+        <div class="symbol">🍋</div>
+        <div class="symbol">🔔</div>
+        <div class="symbol">💎</div>
+      </div>
     </div>
     <div class="lever-container" id="lever">
       <div class="lever-ball"></div>
@@ -179,43 +188,39 @@
       document.getElementById("reel1"),
       document.getElementById("reel2"),
       document.getElementById("reel3"),
+      document.getElementById("reel4")
     ];
     const resultMessage = document.getElementById("resultMessage");
     const lever = document.getElementById("lever");
 
-    // Function to Spin Reels
     function spinReels() {
-      resultMessage.textContent = ""; // Clear message
-
+      resultMessage.textContent = ""; // Clear previous message
       reels.forEach((reel, index) => {
         reel.classList.add("spinning");
-
         setTimeout(() => {
           reel.classList.remove("spinning");
           const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
           reel.innerHTML = `<div class="symbol">${randomSymbol}</div>`;
           if (index === reels.length - 1) checkResult();
-        }, 2000 + index * 300); // Staggered stopping
+        }, 2000 + index * 300); // Staggered stopping for each reel
       });
     }
 
-    // Function to Check Results
     function checkResult() {
-      const [first, second, third] = reels.map(reel => reel.textContent.trim());
-      if (first === second && second === third) {
+      const [first, second, third, fourth] = reels.map(reel => reel.textContent.trim());
+      if (first === second && second === third && third === fourth) {
         resultMessage.textContent = `🎉 Jackpot! You matched ${first}!`;
       } else {
         resultMessage.textContent = `😞 Try again!`;
       }
     }
 
-    // Lever Pull
     lever.addEventListener("click", () => {
       lever.classList.add("active");
       setTimeout(() => {
         lever.classList.remove("active");
         spinReels();
-      }, 300); // Delay to simulate pulling
+      }, 500);
     });
   </script>
 </body>
