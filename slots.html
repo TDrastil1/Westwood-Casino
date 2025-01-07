@@ -5,106 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Slot Machine</title>
   <style>
-    /* Debug Styling */
-    .debug {
-      position: fixed; 
-      top: 4px; 
-      left: 50%; 
-      transform: translateX(-50%); 
-      padding: 4px; 
-      background: white;
-      border: 1px solid rgba(0, 0, 0, 0.3); 
-      font-family: monospace; 
-      font-size: 1.6rem;
-    }
-
-    html, body { 
-      height: 100%; 
-    }
-
+    /* General Styling */
     body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: radial-gradient(circle, #222, #000);
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #ffd700;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+      margin-top: 20px;
+    }
+
+    .slots-container {
+      position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(45deg, grey 0%, lightgray 100%);
+      margin: 50px auto;
+      width: 400px;
+      height: 250px;
+      background: #333;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     }
 
     .slots {
-      position: relative;
-      width: calc(3.5 * 79px);
-      height: calc(3 * 79px);
       display: flex;
       justify-content: space-between;
-      padding: calc(0.3 * 79px);
-      background: linear-gradient(45deg, grey 0%, lightgray 100%);
-      border-top: 1px solid rgba(255, 255, 255, 0.6);
-      border-right: 1px solid rgba(255, 255, 255, 0.6);
-      border-left: 1px solid rgba(0, 0, 0, 0.4);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.4);
-      box-shadow: -2px 2px 3px rgba(0, 0, 0, 0.3);
-      border-radius: 3px;
-    }
-
-    .slots::before, 
-    .slots::after {
-      content:"";
-      position: absolute;
-      top: 50%;
-      width: 10px;
-      height: 2px;
-      background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .slots::before {
-      left: 0;
-      transform: translate(-200%, -50%);
-    }
-
-    .slots::after {
-      right: 0;
-      transform: translate(200%, -50%);
-    }
-
-    @keyframes win1 {
-      0% { 
-        background: linear-gradient(45deg, orange 0%, yellow 100%); 
-        box-shadow: 0 0 80px orange; 
-      }
-      100% { 
-        background: linear-gradient(45deg, grey 0%, lightgrey 100%);
-        box-shadow: -2px 2px 3px rgba(0, 0, 0, 0.3); 
-      }
-    }
-
-    @keyframes win2 {
-      0% { 
-        background: linear-gradient(45deg, lightblue 0%, lightgreen 100%);
-        box-shadow: 0 0 80px lightgreen; 
-      }
-      100% { 
-        background: linear-gradient(45deg, grey 0%, lightgrey 100%);
-        box-shadow: -2px 2px 3px rgba(0, 0, 0, 0.3); 
-      }
-    }
-
-    .slots.win1 {
-      animation: win1 200ms steps(2, end) infinite;
-    }
-
-    .slots.win2 {
-      animation: win2 200ms steps(2, end) infinite;
+      width: 60%;
+      height: 100%;
+      padding: 10px;
+      background: linear-gradient(45deg, #555 0%, #333 100%);
+      border-radius: 10px;
+      box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.8);
     }
 
     .reel {
       position: relative;
-      width: 79px;
-      height: calc(3 * 79px);
-      border: 1px solid rgba(0, 0, 0, 0.3);
-      border-radius: 3px;
-      overflow: hidden;
+      width: 70px;
+      height: 100%;
+      border: 2px solid #444;
+      border-radius: 5px;
       background-image: url(https://assets.codepen.io/439000/slotreel.webp);
+      background-size: cover;
       background-position: 0 0;
       background-repeat: repeat-y;
+      overflow: hidden;
     }
 
     .reel::after {
@@ -118,35 +70,91 @@
       box-shadow: inset 0 0 6px 2px rgba(0, 0, 0, 0.3);
     }
 
-    p {
+    /* Lever Styling */
+    .lever-container {
       position: absolute;
-      bottom: 0;
+      right: -50px;
+      width: 80px;
+      height: 200px;
+      background: linear-gradient(to bottom, #8b0000, #550000);
+      border-radius: 5px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+      cursor: pointer;
+    }
+
+    .lever-stick {
+      position: absolute;
+      top: 20px;
       left: 50%;
-      width: 100%;
-      transform: translate(-50%, calc(100% + 30px));
-      text-align: center;
-      font-size: 0.80rem;
-      color: #444;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 100px;
+      background: #444;
+      border-radius: 5px;
     }
 
-    p:last-child {
-      transform: translate(-50%, calc(100% + 60px));
+    .lever-ball {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle, #ff0000, #aa0000);
+      border-radius: 50%;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
     }
 
-    a {
-      color: red; 
-      font-weight: 700; 
+    /* Spin Result */
+    .result {
+      margin-top: 20px;
+      font-size: 1.5rem;
+      color: #ffcc00;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
     }
   </style>
 </head>
 <body>
-  <div class="slots">
-    <div class="reel"></div>
-    <div class="reel"></div>
-    <div class="reel"></div>
-    <p>Step-by-step tutorial for this pen at <a target="_blank" href="https://youtu.be/boI2B4Gpp34">YouTube</a></p>
-    <p>Want to determine the outcome?<br>Here's <a target="_blank" href="https://codepen.io/josfabre/pen/KKLwxbE">a rigged version!</a></p>
+  <h1>Slot Machine</h1>
+  <div class="slots-container">
+    <div class="slots">
+      <div class="reel" id="reel1"></div>
+      <div class="reel" id="reel2"></div>
+      <div class="reel" id="reel3"></div>
+    </div>
+    <div class="lever-container" id="lever">
+      <div class="lever-stick"></div>
+      <div class="lever-ball"></div>
+    </div>
   </div>
-  <div id="debug" class="debug"></div>
+  <p class="result" id="resultMessage">Pull the lever to spin!</p>
+
+  <script>
+    const lever = document.getElementById("lever");
+    const reels = [
+      document.getElementById("reel1"),
+      document.getElementById("reel2"),
+      document.getElementById("reel3"),
+    ];
+    const resultMessage = document.getElementById("resultMessage");
+
+    // Function to simulate spinning reels
+    function spinReels() {
+      resultMessage.textContent = "Spinning...";
+      reels.forEach((reel, index) => {
+        const randomPosition = Math.floor(Math.random() * 10) * -70; // Randomize stop position
+        reel.style.backgroundPositionY = `${randomPosition}px`;
+      });
+
+      setTimeout(() => {
+        resultMessage.textContent = "Check the results!";
+      }, 1000);
+    }
+
+    // Lever interaction
+    lever.addEventListener("click", () => {
+      spinReels();
+    });
+  </script>
 </body>
 </html>
