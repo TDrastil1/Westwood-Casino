@@ -1,60 +1,58 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const currentUser = localStorage.getItem("currentUser");
-    const users = JSON.parse(localStorage.getItem("users")) || {};
+// Slot Machine JavaScript
 
-    if (!currentUser || !users[currentUser]) {
-        alert("You must log in to play Slots.");
-        window.location.href = "index.html";
-        return;
-    }
+const symbols = ["🍒", "🍋", "🔔", "💎"]; // Slot machine symbols
+const reels = [
+  document.getElementById("reel1"),
+  document.getElementById("reel2"),
+  document.getElementById("reel3"),
+]; // Reel DOM elements
+const resultMessage = document.getElementById("resultMessage"); // Result message display
+const lever = document.getElementById("lever"); // Lever DOM element
 
-    const reels = ["🍒", "🍋", "🍉", "⭐", "🍇"];
-    const spinButton = document.getElementById("spin-button");
-    const reel1 = document.getElementById("reel1");
-    const reel2 = document.getElementById("reel2");
-    const reel3 = document.getElementById("reel3");
-    const message = document.getElementById("message");
+// Spin the reels
+function spinReels() {
+  resultMessage.textContent = ""; // Clear any previous result message
 
-    function getRandomSymbol() {
-        return reels[Math.floor(Math.random() * reels.length)];
-    }
+  const results = []; // Store the final symbols of each reel
+  reels.forEach((reel, index) => {
+    // Create a randomized sequence of symbols for the reel
+    const shuffledSymbols = [...symbols, ...symbols, ...symbols];
+    reel.innerHTML = shuffledSymbols
+      .map((symbol) => `<div class="symbol">${symbol}</div>`)
+      .join("");
 
-    function spin() {
-        const bet = 50; // Cost of one spin
-        if (users[currentUser].balance < bet) {
-            alert("Insufficient balance to spin. Please deposit more ς.");
-            return;
-        }
+    // Determine the stop position of the reel
+    const stopAt = Math.floor(Math.random() * shuffledSymbols.length);
+    const scrollAmount = stopAt * 100; // Each symbol takes up 100px height
+    results.push(shuffledSymbols[stopAt]); // Store the result symbol
 
-        // Deduct the bet
-        users[currentUser].balance -= bet;
-        localStorage.setItem("users", JSON.stringify(users));
-        alert(`50 ς deducted. Your remaining balance is ${users[currentUser].balance} ς.`);
+    // Animate the reel spin
+    setTimeout(() => {
+      reel.scrollTop = scrollAmount; // Scroll the reel to the stop position
+      if (index === reels.length - 1) checkResult(results); // Check result after last reel stops
+    }, 1000 + index * 500); // Stagger reel stop times for better animation
+  });
+}
 
-        // Spin the reels
-        const result1 = getRandomSymbol();
-        const result2 = getRandomSymbol();
-        const result3 = getRandomSymbol();
+// Check the spin results
+function checkResult(results) {
+  const [first, second, third] = results; // Extract the results of all three reels
 
-        reel1.textContent = result1;
-        reel2.textContent = result2;
-        reel3.textContent = result3;
+  // Determine the outcome based on matching symbols
+  if (first === second && second === third) {
+    resultMessage.textContent = `🎉 Jackpot! You win 20 ς!`;
+  } else if (first === second || second === third || first === third) {
+    resultMessage.textContent = `✨ You win 5 ς!`;
+  } else {
+    resultMessage.textContent = `😞 Try again!`;
+  }
+}
 
-        // Determine winnings
-        if (result1 === result2 && result2 === result3) {
-            const prize = 500;
-            users[currentUser].balance += prize;
-            localStorage.setItem("users", JSON.stringify(users));
-            message.textContent = `🎉 JACKPOT! You win ${prize} ς! Your new balance is ${users[currentUser].balance} ς.`;
-        } else if (result1 === result2 || result2 === result3 || result1 === result3) {
-            const prize = 100;
-            users[currentUser].balance += prize;
-            localStorage.setItem("users", JSON.stringify(users));
-            message.textContent = `🥳 Nice! You win ${prize} ς! Your new balance is ${users[currentUser].balance} ς.`;
-        } else {
-            message.textContent = "😞 Better luck next time!";
-        }
-    }
-
-    spinButton.addEventListener("click", spin);
+// Add event listener to the lever
+lever.addEventListener("click", () => {
+  lever.classList.add("active"); // Visually indicate the lever is pulled
+  setTimeout(() => {
+    lever.classList.remove("active"); // Reset lever position
+    spinReels(); // Start the reels spinning
+  }, 300); // Delay lever reset to sync with the spin start
 });
