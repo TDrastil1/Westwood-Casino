@@ -3,152 +3,160 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Westwood Casino</title>
+  <title>Westwood Casino - Dashboard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #0b3d20; /* Dark green poker table color */
+      background-color: #1e1e2f;
       color: #fff;
       text-align: center;
-      background: radial-gradient(circle, rgba(0, 0, 0, 0.3) 20%, transparent 20%) #0b3d20;
-      background-size: 50px 50px;
+      margin: 0;
+      padding: 0;
     }
 
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      padding: 20px;
+    .blackjack-table {
+      position: relative;
+      margin: 50px auto;
+      width: 800px;
+      height: 500px;
+      background: radial-gradient(circle, #006600, #003300);
+      border-radius: 50%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      border: 10px solid #d4af37;
     }
 
-    h1 {
-      font-size: 3rem;
+    .table-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .table-center h1 {
+      font-size: 2.5rem;
       color: #ffcc00;
       text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
-    p {
+    .table-center p {
       font-size: 1.2rem;
-      color: #ccc;
-      margin-bottom: 30px;
-    }
-
-    .game-options {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      flex-wrap: wrap;
-    }
-
-    .chip {
-      width: 150px;
-      height: 150px;
-      background-color: #007bff;
-      border-radius: 50%;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
       color: #fff;
-      font-size: 1.2rem;
-      font-weight: bold;
-      transition: transform 0.3s, box-shadow 0.3s;
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+      margin-top: -10px;
     }
 
-    .chip:hover {
+    .card-buttons {
+      display: flex;
+      justify-content: space-around;
+      position: absolute;
+      bottom: 20%;
+      left: 10%;
+      width: 80%;
+    }
+
+    .card-button {
+      width: 100px;
+      height: 140px;
+      background: white;
+      border-radius: 8px;
+      border: 2px solid #000;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      position: relative;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Georgia', serif;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-button:hover {
       transform: scale(1.1);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7);
     }
 
-    .chip::before {
-      content: '';
+    .card-button .card-rank {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #000;
       position: absolute;
-      top: 5%;
-      left: 5%;
-      width: 90%;
-      height: 90%;
-      border-radius: 50%;
-      border: 6px solid #fff;
-      z-index: 1;
+      top: 10px;
+      left: 10px;
     }
 
-    .chip::after {
-      content: '';
+    .card-button .card-suit {
+      font-size: 2rem;
       position: absolute;
-      top: 10%;
-      left: 10%;
-      width: 80%;
-      height: 80%;
-      border-radius: 50%;
-      border: 6px solid #007bff;
-      z-index: 1;
+      bottom: 10px;
+      right: 10px;
     }
 
-    .chip .inner {
-      z-index: 2;
-      text-align: center;
+    .spades {
+      color: black;
     }
 
-    .chip.red {
-      background-color: #e74c3c;
+    .hearts {
+      color: red;
     }
 
-    .chip.green {
-      background-color: #27ae60;
+    .clubs {
+      color: black;
     }
 
-    .chip.yellow {
-      background-color: #f1c40f;
+    .diamonds {
+      color: red;
     }
 
-    .chip.red::after {
-      border-color: #e74c3c;
-    }
-
-    .chip.green::after {
-      border-color: #27ae60;
-    }
-
-    .chip.yellow::after {
-      border-color: #f1c40f;
-    }
-
-    footer {
-      margin-top: 30px;
+    .back-link {
+      margin-top: 20px;
       color: #ccc;
+      font-size: 1.2rem;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .back-link:hover {
+      color: #fff;
+    }
+
+    .card-table-rules {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      color: #d4af37;
       font-size: 0.9rem;
+      text-align: center;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Welcome to Westwood Casino</h1>
-    <p>Select a game below to start playing!</p>
-    <div class="game-options">
-      <!-- Slots Button -->
-      <a href="slots.html" class="chip red">
-        <div class="inner">🎰<br>Slots</div>
-      </a>
-      <!-- Plinko Button -->
-      <a href="plinko.html" class="chip green">
-        <div class="inner">🔽<br>Plinko</div>
-      </a>
-      <!-- Scratch-Offs Button -->
-      <a href="scratch.html" class="chip yellow">
-        <div class="inner">🎟️<br>Scratch-Offs</div>
-      </a>
+  <div class="blackjack-table">
+    <div class="table-center">
+      <h1>Welcome to Westwood Casino</h1>
+      <p>Choose your game to start playing!</p>
     </div>
-    <footer>
-      © 2025 Westwood Casino | Play responsibly | All rights reserved
-    </footer>
+    <div class="card-buttons">
+      <div class="card-button" onclick="window.location.href='slots.html'">
+        <div class="card-rank">A</div>
+        <div class="card-suit spades">♠</div>
+      </div>
+      <div class="card-button" onclick="window.location.href='plinko.html'">
+        <div class="card-rank">A</div>
+        <div class="card-suit hearts">♥</div>
+      </div>
+      <div class="card-button" onclick="window.location.href='scratch.html'">
+        <div class="card-rank">A</div>
+        <div class="card-suit clubs">♣</div>
+      </div>
+      <div class="card-button" onclick="window.location.href='blackjack.html'">
+        <div class="card-rank">A</div>
+        <div class="card-suit diamonds">♦</div>
+      </div>
+    </div>
+    <div class="card-table-rules">
+      <p>Play responsibly | Use school currency (ς) | All rights reserved</p>
+    </div>
   </div>
+  <a href="index.html" class="back-link">← Back to Main Menu</a>
 </body>
 </html>
