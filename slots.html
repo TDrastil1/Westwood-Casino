@@ -65,6 +65,7 @@
       border-bottom: 1px solid #222;
     }
 
+    /* Lever Styling */
     .lever-container {
       position: absolute;
       right: -50px;
@@ -134,7 +135,7 @@
     const resultMessage = document.getElementById("resultMessage");
     const lever = document.getElementById("lever");
 
-    // Initialize reels with symbols
+    // Populate each reel with symbols
     function populateReel(reel) {
       reel.innerHTML = symbols
         .map((symbol) => `<div class="symbol">${symbol}</div>`)
@@ -147,6 +148,7 @@
     function spinReels() {
       resultMessage.textContent = "Spinning...";
       const results = [];
+
       reels.forEach((reel, index) => {
         const randomIndex = Math.floor(Math.random() * symbols.length);
         const stopAt = randomIndex * -50; // Each symbol is 50px tall
@@ -173,6 +175,7 @@
     // Check the results
     function checkResults(results) {
       const [first, second, third] = results;
+
       if (first === second && second === third) {
         resultMessage.textContent = "🎉 Jackpot! You win 20 ς!";
       } else if (first === second || second === third || first === third) {
@@ -182,8 +185,15 @@
       }
     }
 
-    // Lever interaction
-    lever.addEventListener("click", spinReels);
+    // Lever animation and interaction
+    lever.addEventListener("click", () => {
+      lever.classList.add("active");
+      lever.style.transform = "rotate(30deg)";
+      setTimeout(() => {
+        lever.style.transform = "rotate(0)";
+        spinReels();
+      }, 300); // Trigger reels when lever is pulled down
+    });
   </script>
 </body>
 </html>
