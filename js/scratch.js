@@ -1,12 +1,12 @@
-// Array of possible prizes with weighted probabilities
+// House-tilted prize outcomes
 const prizeOutcomes = [
-  { prize: "🎉 $100,000", color: "#28a745", weight: 5 },
-  { prize: "✨ $10,000", color: "#ffc107", weight: 15 },
-  { prize: "💰 $1,000", color: "#007bff", weight: 30 },
-  { prize: "😞 Try Again", color: "#ff4444", weight: 50 },
+  { prize: "🎉 $100,000", color: "#28a745", weight: 1 },
+  { prize: "✨ $10,000", color: "#ffc107", weight: 5 },
+  { prize: "💰 $1,000", color: "#007bff", weight: 20 },
+  { prize: "😞 Try Again", color: "#ff4444", weight: 74 },
 ];
 
-// Function to generate a random prize based on weighted probabilities
+// Get a random prize based on weighted probabilities
 function getRandomPrize() {
   const totalWeight = prizeOutcomes.reduce((sum, outcome) => sum + outcome.weight, 0);
   const randomWeight = Math.floor(Math.random() * totalWeight);
@@ -20,35 +20,31 @@ function getRandomPrize() {
   }
 }
 
-// Function to initialize scratchable areas
-function initializeScratchAreas() {
-  const scratchableElements = document.querySelectorAll(".scratch-overlay");
+// Initialize scratch card
+function initializeScratchCard() {
+  const overlays = document.querySelectorAll(".scratch-overlay");
+  const coin = document.getElementById("coin");
 
-  scratchableElements.forEach((overlay, index) => {
-    const canvas = overlay;
+  overlays.forEach((canvas) => {
     const ctx = canvas.getContext("2d");
     const hiddenValue = canvas.previousElementSibling;
 
-    // Set canvas dimensions
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
 
-    // Fill canvas with scratchable color
     ctx.fillStyle = "#bbb";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Set random prize
+    // Assign random prize
     const randomPrize = getRandomPrize();
     hiddenValue.textContent = randomPrize.prize;
     hiddenValue.style.color = randomPrize.color;
 
-    // Scratch effect variables
     let scratchedArea = 0;
     const totalArea = canvas.width * canvas.height;
 
-    // Scratch functionality
     canvas.addEventListener("mousemove", (e) => {
-      if (e.buttons !== 1) return; // Scratch only when the mouse button is pressed
+      if (e.buttons !== 1) return;
 
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -59,17 +55,22 @@ function initializeScratchAreas() {
       ctx.arc(x, y, 20, 0, Math.PI * 2);
       ctx.fill();
 
-      // Calculate scratched area
       scratchedArea += Math.PI * 20 * 20;
 
-      // Reveal prize if 70% is scratched
       if ((scratchedArea / totalArea) > 0.7) {
-        canvas.style.pointerEvents = "none"; // Disable further scratching
-        hiddenValue.style.display = "block"; // Show the prize
+        canvas.style.pointerEvents = "none";
+        hiddenValue.style.display = "block";
       }
     });
   });
+
+  // Coin follows mouse
+  document.addEventListener("mousemove", (e) => {
+    coin.style.display = "block";
+    coin.style.left = `${e.pageX - 20}px`;
+    coin.style.top = `${e.pageY - 20}px`;
+  });
 }
 
-// Initialize scratch card functionality when the page loads
-document.addEventListener("DOMContentLoaded", initializeScratchAreas);
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", initializeScratchCard);
