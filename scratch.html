@@ -30,6 +30,12 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
+    .instructions {
+      font-size: 1rem;
+      color: #ccc;
+      margin: 10px 0;
+    }
+
     .bonus-section, .numbers-section {
       display: flex;
       justify-content: space-around;
@@ -75,6 +81,17 @@
       z-index: 3;
     }
 
+    .coin {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background-color: #ffd700;
+      border-radius: 50%;
+      pointer-events: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      display: none;
+    }
+
     .section-title {
       color: #fff;
       margin: 10px 0;
@@ -96,23 +113,8 @@
 </head>
 <body>
   <h1>Scratch-Offs</h1>
+  <p class="instructions">Use the coin to scratch off the areas and reveal your prize. Match any numbers to the winning numbers to win the corresponding amount!</p>
   <div class="scratch-card">
-    <!-- Bonus Section -->
-    <div class="bonus-section">
-      <div class="bonus">
-        <div class="hidden-value" id="bonus1"></div>
-        <canvas class="scratch-overlay" id="bonusCanvas1"></canvas>
-      </div>
-      <div class="bonus">
-        <div class="hidden-value" id="bonus2"></div>
-        <canvas class="scratch-overlay" id="bonusCanvas2"></canvas>
-      </div>
-      <div class="bonus">
-        <div class="hidden-value" id="bonus3"></div>
-        <canvas class="scratch-overlay" id="bonusCanvas3"></canvas>
-      </div>
-    </div>
-
     <!-- Winning Numbers Section -->
     <h3 class="section-title">Winning Numbers</h3>
     <div class="numbers-section">
@@ -127,14 +129,6 @@
       <div class="prize-box">
         <div class="hidden-value" id="winning3"></div>
         <canvas class="scratch-overlay" id="winningCanvas3"></canvas>
-      </div>
-      <div class="prize-box">
-        <div class="hidden-value" id="winning4"></div>
-        <canvas class="scratch-overlay" id="winningCanvas4"></canvas>
-      </div>
-      <div class="prize-box">
-        <div class="hidden-value" id="winning5"></div>
-        <canvas class="scratch-overlay" id="winningCanvas5"></canvas>
       </div>
     </div>
 
@@ -157,32 +151,10 @@
         <div class="hidden-value" id="your4"></div>
         <canvas class="scratch-overlay" id="yourCanvas4"></canvas>
       </div>
-      <div class="prize-box">
-        <div class="hidden-value" id="your5"></div>
-        <canvas class="scratch-overlay" id="yourCanvas5"></canvas>
-      </div>
-      <div class="prize-box">
-        <div class="hidden-value" id="your6"></div>
-        <canvas class="scratch-overlay" id="yourCanvas6"></canvas>
-      </div>
-      <div class="prize-box">
-        <div class="hidden-value" id="your7"></div>
-        <canvas class="scratch-overlay" id="yourCanvas7"></canvas>
-      </div>
-      <div class="prize-box">
-        <div class="hidden-value" id="your8"></div>
-        <canvas class="scratch-overlay" id="yourCanvas8"></canvas>
-      </div>
-      <div class="prize-box">
-        <div class="hidden-value" id="your9"></div>
-        <canvas class="scratch-overlay" id="yourCanvas9"></canvas>
-      </div>
-      <div class="prize-box">
-        <div class="hidden-value" id="your10"></div>
-        <canvas class="scratch-overlay" id="yourCanvas10"></canvas>
-      </div>
     </div>
   </div>
+  <div class="coin" id="coin">💰</div>
+  <a href="index.html" class="back-link">← Back to Home</a>
   <script src="script.js"></script>
 </body>
 </html>
