@@ -2,91 +2,58 @@
 const canvas = document.getElementById("scratch");
 const context = canvas.getContext("2d");
 const resultMessage = document.getElementById("resultMessage");
+const coinButton = document.getElementById("coinButton");
 
 // Initialize the scratch area
 const init = () => {
-  // Set dark-themed scratch area background
+  // Set a dark-themed scratch area background
   const gradientColor = context.createLinearGradient(0, 0, canvas.width, canvas.height);
   gradientColor.addColorStop(0, "#333");
   gradientColor.addColorStop(1, "#444");
   context.fillStyle = gradientColor;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Randomize the outcome
+  // Randomize the outcome for the scratch card
   randomizeOutcome();
 };
 
-// Randomize the outcome for the scratch card
+// Randomize the outcome
 const randomizeOutcome = () => {
   const outcome = Math.random() < 0.05 ? "🎉 You Win $100!" : "😞 Try Again Next Time.";
   resultMessage.textContent = outcome;
-  resultMessage.style.display = "none"; // Hide until fully scratched
+  resultMessage.style.display = "none"; // Hide the result until the card is scratched
 };
 
-// Scratch functionality
-let isScratching = false;
+// Simulate scratching the card
+const scratchOff = () => {
+  context.globalCompositeOperation = "destination-out"; // Allow scratching effect
 
-// Scratch the canvas at specified coordinates
-const scratch = (x, y) => {
-  context.globalCompositeOperation = "destination-out";
-  context.beginPath();
-  context.arc(x, y, 20, 0, 2 * Math.PI);
-  context.fill();
-};
+  let x = 0;
+  let y = 0;
+  const step = 10;
 
-// Get the mouse or touch position on the canvas
-const getXY = (e) => {
-  const rect = canvas.getBoundingClientRect();
-  const x = (e.pageX || e.touches[0].pageX) - rect.left;
-  const y = (e.pageY || e.touches[0].pageY) - rect.top;
-  return { x, y };
-};
+  // Animate the scratch-off process
+  const interval = setInterval(() => {
+    context.beginPath();
+    context.arc(x, y, 20, 0, 2 * Math.PI); // Create circular "scratches"
+    context.fill();
 
-// Check if the scratch area is sufficiently revealed
-const checkScratchCompletion = () => {
-  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-  const totalPixels = imageData.data.length / 4;
-  let revealedPixels = 0;
-
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    if (imageData.data[i + 3] === 0) {
-      revealedPixels++; // Count transparent pixels
+    x += step; // Move horizontally
+    if (x > canvas.width) {
+      x = 0; // Reset to the start of the next row
+      y += step; // Move down vertically
     }
-  }
 
-  const revealedPercentage = (revealedPixels / totalPixels) * 100;
-  if (revealedPercentage > 70) {
-    resultMessage.style.display = "block"; // Reveal the outcome
-    canvas.style.pointerEvents = "none"; // Disable further scratching
-  }
+    // Check if the entire canvas has been scratched
+    if (y > canvas.height) {
+      clearInterval(interval);
+      resultMessage.style.display = "block"; // Display the outcome
+    }
+  }, 10);
 };
 
-// Add event listeners for scratch functionality
-["mousedown", "touchstart"].forEach((event) => {
-  canvas.addEventListener(event, (e) => {
-    isScratching = true;
-    const { x, y } = getXY(e);
-    scratch(x, y);
-    checkScratchCompletion();
-  });
-});
+// Add event listener for the coin button
+coinButton.addEventListener("click", scratchOff);
 
-["mousemove", "touchmove"].forEach((event) => {
-  canvas.addEventListener(event, (e) => {
-    if (isScratching) {
-      e.preventDefault();
-      const { x, y } = getXY(e);
-      scratch(x, y);
-      checkScratchCompletion();
-    }
-  });
-});
-
-["mouseup", "touchend", "mouseleave"].forEach((event) => {
-  canvas.addEventListener(event, () => {
-    isScratching = false;
-  });
-});
-
-// Initialize the scratch card on window load
+// Initialize the game when the page loads
 window.onload = init;
