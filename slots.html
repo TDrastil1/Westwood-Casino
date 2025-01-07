@@ -3,201 +3,145 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Realistic Slot Machine</title>
+  <title>Scratch-Off Game</title>
   <style>
-    body {
+    * {
+      padding: 0;
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: radial-gradient(circle, #111, #000);
-      color: white;
-      text-align: center;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      background-color: #1e1e2f;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      font-family: "Poppins", sans-serif;
+      color: #fff;
+    }
+
+    .container {
+      width: 400px;
+      height: 500px;
+      background-color: #2b2b3c;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     h1 {
-      font-size: 2.5rem;
-      color: #ffd700;
-      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-    }
-
-    .slot-machine {
-      position: relative;
-      width: 400px;
-      height: 300px;
-      background: #333;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-      overflow: hidden;
-    }
-
-    .reels-container {
-      display: flex;
-      justify-content: space-around;
-      margin: 30px;
-      height: 150px;
-      background: #000;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .reel {
-      width: 90px;
-      height: 150px;
-      background: linear-gradient(to bottom, #444, #222);
-      border-radius: 10px;
-      border: 2px solid #333;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .symbol {
       font-size: 2rem;
-      color: white;
-      font-weight: bold;
-      text-align: center;
-      line-height: 50px;
-      height: 50px;
+      margin-bottom: 20px;
+      color: #ffcc00;
     }
 
-    /* Lever Styling */
-    .lever-container {
-      position: absolute;
-      right: -70px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 70px;
+    canvas {
+      width: 100%;
       height: 300px;
-      background: linear-gradient(to bottom, #8b0000, #550000);
       border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
 
-    .lever-stick {
-      position: absolute;
-      top: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 10px;
-      height: 150px;
-      background: #444;
-      border-radius: 5px;
-      transition: transform 0.2s ease-in-out;
-    }
-
-    .lever-ball {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px;
-      height: 50px;
-      background: radial-gradient(circle, #ff0000, #aa0000);
-      border-radius: 50%;
-      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
-      transition: transform 0.2s ease-in-out;
-    }
-
-    .result-message {
+    #resultMessage {
       margin-top: 20px;
       font-size: 1.5rem;
-      color: #ffcc00;
-      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+      font-weight: bold;
+      display: none;
+    }
+
+    .coin-button {
+      width: 100px;
+      height: 100px;
+      background-color: #ffd700;
+      border-radius: 50%;
+      border: 2px solid #e0a800;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s ease;
+    }
+
+    .coin-button:hover {
+      transform: scale(1.1);
+    }
+
+    .coin-button:active {
+      transform: scale(1.05);
     }
   </style>
 </head>
 <body>
-  <h1>Realistic Slot Machine</h1>
-  <div class="slot-machine">
-    <div class="reels-container">
-      <div class="reel" id="reel1"></div>
-      <div class="reel" id="reel2"></div>
-      <div class="reel" id="reel3"></div>
-    </div>
-    <div class="lever-container" id="lever">
-      <div class="lever-stick" id="leverStick"></div>
-      <div class="lever-ball" id="leverBall"></div>
-    </div>
+  <div class="container">
+    <h1>Scratch-Off Game</h1>
+    <canvas id="scratch" width="400" height="300"></canvas>
+    <button class="coin-button" id="coinButton">Scratch</button>
+    <p id="resultMessage"></p>
   </div>
-  <p class="result-message" id="resultMessage">Pull the lever to spin!</p>
-
   <script>
-    const symbols = ["🍒", "🍋", "🔔", "💎", "⭐", "🍉"]; // Slot machine symbols
-    const reels = [
-      document.getElementById("reel1"),
-      document.getElementById("reel2"),
-      document.getElementById("reel3"),
-    ]; // Reel elements
-    const resultMessage = document.getElementById("resultMessage"); // Result message element
-    const leverStick = document.getElementById("leverStick"); // Lever stick
-    const leverBall = document.getElementById("leverBall"); // Lever ball
+    // Elements
+    const canvas = document.getElementById("scratch");
+    const context = canvas.getContext("2d");
+    const resultMessage = document.getElementById("resultMessage");
+    const coinButton = document.getElementById("coinButton");
 
-    // Populate each reel with symbols
-    function populateReel(reel) {
-      reel.innerHTML = symbols
-        .map((symbol) => `<div class="symbol">${symbol}</div>`)
-        .join("");
-    }
+    // Initialize the scratch area
+    const init = () => {
+      // Set dark-themed scratch area background
+      const gradientColor = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradientColor.addColorStop(0, "#333");
+      gradientColor.addColorStop(1, "#444");
+      context.fillStyle = gradientColor;
+      context.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Initialize reels
-    reels.forEach(populateReel);
+      // Randomize the outcome
+      randomizeOutcome();
+    };
 
-    // Spin the reels
-    function spinReels() {
-      resultMessage.textContent = "Spinning...";
-      const results = [];
+    // Randomize the outcome for the scratch card
+    const randomizeOutcome = () => {
+      const outcome = Math.random() < 0.05 ? "🎉 You Win $100!" : "😞 Try Again Next Time.";
+      resultMessage.textContent = outcome;
+      resultMessage.style.display = "none"; // Hide until fully scratched
+    };
 
-      reels.forEach((reel) => {
-        const randomIndex = Math.floor(Math.random() * symbols.length);
-        const stopAt = randomIndex * -50; // Each symbol is 50px tall
-        results.push(symbols[randomIndex]);
+    // Simulate scratching the canvas
+    const scratchOff = () => {
+      context.globalCompositeOperation = "destination-out";
 
-        // Animate reel spin
-        reel.style.transition = "transform 1s ease-out";
-        reel.style.transform = `translateY(${stopAt}px)`;
+      let x = 0;
+      let y = 0;
+      const step = 10;
 
-        // Reset reel position after animation
-        setTimeout(() => {
-          reel.style.transition = "none";
-          reel.style.transform = "translateY(0)";
-          populateReel(reel);
-        }, 1000);
-      });
+      const interval = setInterval(() => {
+        context.beginPath();
+        context.arc(x, y, 20, 0, 2 * Math.PI);
+        context.fill();
 
-      // Display results after spin
-      setTimeout(() => checkResults(results), 1000);
-    }
+        x += step;
+        if (x > canvas.width) {
+          x = 0;
+          y += step;
+        }
 
-    // Check results
-    function checkResults(results) {
-      const [first, second, third] = results;
+        if (y > canvas.height) {
+          clearInterval(interval);
+          resultMessage.style.display = "block"; // Reveal the outcome
+        }
+      }, 10);
+    };
 
-      if (first === second && second === third) {
-        resultMessage.textContent = "🎉 Jackpot! You win 20 ς!";
-      } else if (first === second || second === third || first === third) {
-        resultMessage.textContent = "✨ You win 5 ς!";
-      } else {
-        resultMessage.textContent = "😞 Try again!";
-      }
-    }
+    // Add event listener to the coin button
+    coinButton.addEventListener("click", scratchOff);
 
-    // Lever functionality
-    function pullLever() {
-      leverStick.style.transform = "translateX(-50%) rotate(30deg)";
-      leverBall.style.transform = "translateX(-50%) translateY(20px)";
-      setTimeout(() => {
-        leverStick.style.transform = "translateX(-50%) rotate(0)";
-        leverBall.style.transform = "translateX(-50%) translateY(0)";
-        spinReels();
-      }, 300); // Delay to simulate pulling the lever
-    }
-
-    // Add event listeners for lever interactions
-    leverStick.addEventListener("click", pullLever);
-    leverBall.addEventListener("click", pullLever);
+    // Initialize the scratch card on window load
+    window.onload = init;
   </script>
 </body>
 </html>
