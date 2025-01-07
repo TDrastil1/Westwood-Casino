@@ -125,23 +125,24 @@
   <p class="result-message" id="resultMessage">Pull the lever to spin!</p>
 
   <script>
-    const symbols = ["🍒", "🍋", "🔔", "💎", "⭐", "🍉"];
+    const symbols = ["🍒", "🍋", "🔔", "💎", "⭐", "🍉"]; // Slot machine symbols
     const reels = [
       document.getElementById("reel1"),
       document.getElementById("reel2"),
       document.getElementById("reel3"),
-    ];
-    const resultMessage = document.getElementById("resultMessage");
-    const leverStick = document.getElementById("leverStick");
-    const leverBall = document.getElementById("leverBall");
+    ]; // Reel elements
+    const resultMessage = document.getElementById("resultMessage"); // Result message element
+    const leverStick = document.getElementById("leverStick"); // Lever stick
+    const leverBall = document.getElementById("leverBall"); // Lever ball
 
-    // Populate reels with symbols
+    // Populate each reel with symbols
     function populateReel(reel) {
       reel.innerHTML = symbols
         .map((symbol) => `<div class="symbol">${symbol}</div>`)
         .join("");
     }
 
+    // Initialize reels
     reels.forEach(populateReel);
 
     // Spin the reels
@@ -166,7 +167,7 @@
         }, 1000);
       });
 
-      // Display results
+      // Display results after spin
       setTimeout(() => checkResults(results), 1000);
     }
 
@@ -191,9 +192,10 @@
         leverStick.style.transform = "translateX(-50%) rotate(0)";
         leverBall.style.transform = "translateX(-50%) translateY(0)";
         spinReels();
-      }, 300);
+      }, 300); // Delay to simulate pulling the lever
     }
 
+    // Add event listeners for lever interactions
     leverStick.addEventListener("click", pullLever);
     leverBall.addEventListener("click", pullLever);
   </script>
